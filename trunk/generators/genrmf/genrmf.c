@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 /* maxflow generator in DIMACS format */
 /*
    Implemented by 

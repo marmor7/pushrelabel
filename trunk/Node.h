@@ -26,6 +26,7 @@ public:
 	int getExcess() { return excess; }
 	void setExcess(int exc) { excess = exc; }
 	void incExcess(int value) { excess += value; }
+	void decExcess(int value) { excess -= value; }
 	int getID() {return id; }
 	void setID(int node_id) { id = node_id; }
 	EdgeEntry* getAdjList() { return adjList; }
@@ -36,7 +37,7 @@ public:
 
 private :
 	int degree;
-    int label;
+    unsigned int label;
     int x;
     int y;
 	int excess;

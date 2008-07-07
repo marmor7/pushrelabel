@@ -166,6 +166,50 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="genrmf"
+				>
+				<File
+					RelativePath=".\generators\genrmf\gen_maxflow_typedef.h"
+					>
+				</File>
+				<File
+					RelativePath=".\generators\genrmf\genio.c"
+					>
+				</File>
+				<File
+					RelativePath=".\generators\genrmf\genio.h"
+					>
+				</File>
+				<File
+					RelativePath=".\generators\genrmf\genmain.c"
+					>
+				</File>
+				<File
+					RelativePath=".\generators\genrmf\genrmf.c"
+					>
+				</File>
+				<File
+					RelativePath=".\generators\genrmf\math_to_gcc.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Solver"
+			>
+			<File
+				RelativePath=".\Solver\pseudopar.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\EdgeEntry.cpp"

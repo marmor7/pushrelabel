@@ -20,6 +20,6 @@ private:
 	static int preflow();
 	static int discharge(Node* node);
 	static bool isAdmissible(Node* start, EdgeEntry* edge);
-	static int push(EdgeEntry* edge, int value);
+	static int push(int start, EdgeEntry* edge, int value);
 	static int relabel(Node* node);
 };
