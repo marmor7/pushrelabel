@@ -28,7 +28,10 @@ int PushRelabel::calc(Graph* gr)
 	//Calc pre-flow
 	preflow();
 
+	cout << "Max flow value is " << nodeArr[g->getTarget()].getExcess() << endl;
+
 	//pre-flow to flow (remove excesses)
+	//flow();
 
 	return 0;
 }
@@ -122,7 +125,8 @@ int PushRelabel::discharge(Node* node)
 			// (nodes with excess 0 are not in the pool)
 			if (nodeArr[cur->getEndPoint()].getExcess() == 0)
 				g->getPool()->addNode(&nodeArr[cur->getEndPoint()]);
-			push(cur,min(node->getExcess(), cur->getResCapacity()));
+
+			push(node->getID(), cur, min(node->getExcess(), cur->getResCapacity()));
 
 			// If we push to the target, we need to update the labels
 			if (node->getID() == g->getTarget())
@@ -147,14 +151,16 @@ bool PushRelabel::isAdmissible(Node* start, EdgeEntry* edge)
 		(start->getLabel() == nodeArr[edge->getEndPoint()].getLabel() + 1));
 }
 
-int PushRelabel::push(EdgeEntry* edge, int value)
+int PushRelabel::push(int start, EdgeEntry* edge, int value)
 {
 	if (DEBUG >= LOG_1)
-		cout << "push " << nodeArr[edge->getEndPoint()].getID() << 
+		cout << "push from " << start << " to " 
+		<< nodeArr[edge->getEndPoint()].getID() << 
 		" (" << value << "), excess now: ";
 
 	edge->push(value);
 	nodeArr[edge->getEndPoint()].incExcess(value);
+	nodeArr[start].decExcess(value);
 
 	if (DEBUG >= LOG_1)
 		cout << nodeArr[edge->getEndPoint()].getExcess() << endl;
@@ -170,16 +176,23 @@ int PushRelabel::relabel(Node* node)
 
 	while (cur != NULL)
 	{
-		if (nodeArr[cur->getEndPoint()].getLabel() < min)
+		if ((nodeArr[cur->getEndPoint()].getLabel() < min) &&
+			(cur->getResCapacity() > 0))
 			min = nodeArr[cur->getEndPoint()].getLabel();
 
 		cur = cur->getNext();
 	}
-
-	node->setLabel(min + 1);
+	
+	if ((min == INFINITY) || (min >= 11))
+		node->setLabel(INFINITY);
+	else 
+	{
+		node->setLabel(min + 1);
+		g->getPool()->addNode(node);
+	}
 
 	if (DEBUG >= LOG_1)
-		cout << " to: " << min+1 << endl;
+		cout << " to: " << (min == INFINITY ? INFINITY : min+1) << endl;
 
 	return 0;
 }

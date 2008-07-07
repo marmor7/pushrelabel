@@ -17,7 +17,7 @@
 
 int main(int argc, char **argv)
 {
-	Graph *g = new Graph("3X3.grp");
+	Graph *g = new Graph("10X10.grp");
 
 	PushRelabel::calc(g);
 

@@ -1,11 +1,17 @@
 /* genrmf maxflow input generator */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "gen_maxflow_typedef.h"
 #include "genio.h"
+#include <time.h>
+#include "math_to_gcc.h"
+#include <string.h>
 
 
 void print_usage(void);
+
+int look_up(char * s);
 
 void main_gen(int argc, char * argv[])
 {
@@ -60,7 +66,8 @@ void main_gen(int argc, char * argv[])
 	if (seed = -1)
 	  seed = (int) time(0);
 	
-	srand48(seed);
+	//srand48(seed); TBD
+	srand(seed);
 	
 	n = gen_rmf(a, b, c1, c2);
 
