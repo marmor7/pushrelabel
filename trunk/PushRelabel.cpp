@@ -29,9 +29,17 @@ int PushRelabel::calc(Graph* gr)
 	preflow();
 
 	cout << "Max flow value is " << nodeArr[g->getTarget()].getExcess() << endl;
+	//Reset the distance labels - this time from the source
+	updateLabels(g->getSource());
+
+	//Enqueue all the nodes with Excess > 0
+	assert(g->getPool()->isEmpty()); //At this point the queue should be empty
+	for (int i=0 ; i< g->getNodesNum() ; i++) //No +1 here because we don't want the sink
+		if (nodeArr[i].getExcess() > 0)
+			g->getPool()->addNode(&nodeArr[i]);
 
 	//pre-flow to flow (remove excesses)
-	//flow();
+	flow();
 
 	return 0;
 }
@@ -51,14 +59,14 @@ int PushRelabel::updateLabels(int source)
 	nodeQueue.push(LEVEL_UP);
 	nodeArr[source].setLabel(QUEUE_NODE);
 
-	cout << "Init Search: " << endl;
+	cout << "Updating Labels" << endl;
 
 	//Set distance to level
 	while (!nodeQueue.empty())
 	{
 		cur = nodeQueue.front();
 		nodeQueue.pop();
-		
+
 		if (cur == LEVEL_UP)
 		{
 			if (nodeQueue.empty())
@@ -108,6 +116,7 @@ int PushRelabel::preflow()
 int PushRelabel::discharge(Node* node)
 {
 	bool search = false;
+	int push_value = 0;
 
 	//Nodes with no paths to target and the sink need not to be discharged
 	if ((node->getID() == g->getTarget()) || (node->getLabel() == INFINITY))
@@ -126,20 +135,22 @@ int PushRelabel::discharge(Node* node)
 			if (nodeArr[cur->getEndPoint()].getExcess() == 0)
 				g->getPool()->addNode(&nodeArr[cur->getEndPoint()]);
 
-			push(node->getID(), cur, min(node->getExcess(), cur->getResCapacity()));
+			// Push on the edge, and push the opposite on the reverse edge
+			push_value = min(node->getExcess(), cur->getResCapacity());
+			push(node->getID(), cur, push_value);
 
 			// If we push to the target, we need to update the labels
 			if (node->getID() == g->getTarget())
 				search = true;
 		}
-		
+
 		cur = cur->getNext();
 	}
-	
+
 	if (search) 
 		updateLabels(g->getSource());
 
-	if (node->getExcess() > 0)
+	if (node->getExcess() > 0 && node->getID() != g->getSource())
 		relabel(node);
 
 	return 0;
@@ -163,7 +174,13 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 	nodeArr[start].decExcess(value);
 
 	if (DEBUG >= LOG_1)
-		cout << nodeArr[edge->getEndPoint()].getExcess() << endl;
+	{
+		int tmp = nodeArr[edge->getEndPoint()].getExcess();
+		if (tmp == INFINITY)
+			cout << "INF" << endl;
+		else
+			cout << nodeArr[edge->getEndPoint()].getExcess() << endl;
+	}
 	return 0;
 }
 
@@ -182,7 +199,7 @@ int PushRelabel::relabel(Node* node)
 
 		cur = cur->getNext();
 	}
-	
+
 	if ((min == INFINITY) || (min >= 11))
 		node->setLabel(INFINITY);
 	else 
@@ -195,4 +212,100 @@ int PushRelabel::relabel(Node* node)
 		cout << " to: " << (min == INFINITY ? INFINITY : min+1) << endl;
 
 	return 0;
+}
+
+int PushRelabel::flow()
+{
+	NodePool* pool = g->getPool();
+	while (!pool->isEmpty())
+	{
+		discharge_back(pool->getNode());
+	}
+
+	if (DEBUG >= LOG_1) //Print the excess of each node
+	{
+		for (int i=0 ; i<g->getNodesNum() ; i++)
+			if (nodeArr[i+1].getExcess() > 0)
+				cout << "Node :" << i+1 << " Excess :" << nodeArr[i+1].getExcess() << endl;
+	}
+	return 0;
+}
+
+int PushRelabel::discharge_back(Node *node)
+{
+	int extra, level, quantity;
+	bool search = false;
+	EdgeEntry *edge;
+	Node *end_point;
+
+	//Nodes with no paths to target and the sink need not to be discharged
+	if ((node->getID() == g->getSource()) || (node->getLabel() == INFINITY))
+		return 0;
+
+	extra = node->getExcess();
+
+	while (extra > 0) {
+		level = findClosestPushBack(node);
+		if (level == INFINITY) break;
+
+		edge = node->getAdjList();
+		while (edge != NULL && extra > 0) 
+		{
+			if ((edge->getFlow() < 0) && (nodeArr[edge->getEndPoint()].getLabel() == level)) 
+			{
+				quantity = -edge->getFlow();
+				if (quantity > extra) 
+					quantity = extra;
+				edge->push(quantity);
+
+				end_point = &nodeArr[edge->getEndPoint()];
+
+				if (end_point->getExcess() == 0)
+					g->getPool()->addNode(end_point);
+
+				if (end_point->getID() == g->getSource()) 
+					search = true;
+
+				end_point->incExcess(quantity);
+				extra -= quantity;
+			}
+			edge = edge->getNext();
+		}
+	}
+
+	if (search) 
+		updateLabels(g->getSource());
+	else 
+	{
+		if (extra == 0) 
+			level = findClosestPushBack(node);
+
+		if (level >= g->getTarget()) 
+			node->setLabel(INFINITY);
+		else 
+			node->setLabel(level+1);
+	}
+
+	node->setExcess(extra);
+	return 0;
+}
+
+int PushRelabel::findClosestPushBack(Node* node)
+{
+	EdgeEntry* edge = node->getAdjList();
+	Node* end_point;
+    int min = INFINITY;
+
+	while (edge!=NULL) {
+		if (edge->getFlow() < 0) {
+			end_point = &nodeArr[edge->getEndPoint()];
+			if (end_point->getLabel() < min)
+				min = end_point->getLabel();
+		}
+		edge = edge->getNext();
+	}
+
+	if (min < g->getTarget()) return(min);
+	else return(INFINITY);
+
 }
