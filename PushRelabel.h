@@ -18,7 +18,10 @@ private:
 	static Node* nodeArr;
 
 	static int preflow();
-	static int discharge(Node* node);
+	static int flow();
+	static int discharge(Node* node); //for the preflow
+	static int discharge_back(Node* node); //for the flow
+	static int findClosestPushBack(Node* node);
 	static bool isAdmissible(Node* start, EdgeEntry* edge);
 	static int push(int start, EdgeEntry* edge, int value);
 	static int relabel(Node* node);
