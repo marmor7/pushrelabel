@@ -21,6 +21,7 @@ int Graph::readGraph(string file)
 	int sourceId;
 	int sinkId;
 	string line;
+	EdgeEntry *edge, *reverse;
 
 	if (file.length() == 0)
 	{
@@ -90,11 +91,15 @@ int Graph::readGraph(string file)
 				pos2 = line.find_first_of(" ", pos + 1);
 				cap = atoi(line.substr(pos, line.length()).c_str());
 				
-				nodeArray[nodeId].addEdge(new EdgeEntry(to, cap, 
-					nodeArray[nodeId].getLastEdge()));
-				nodeArray[to].addEdge(new EdgeEntry(nodeId, cap, 
-					nodeArray[to].getLastEdge()));
-				//TODO: add the oposite edge as "other edge"
+				edge = new EdgeEntry(to, cap, 
+					nodeArray[nodeId].getLastEdge());
+				reverse = new EdgeEntry(nodeId, cap, 
+					nodeArray[to].getLastEdge());
+				reverse->reverseEdge = edge;
+				edge->reverseEdge = reverse;
+
+				nodeArray[nodeId].addEdge(edge);
+				nodeArray[to].addEdge(reverse);
 			}
 		}
 		graphFile.close();

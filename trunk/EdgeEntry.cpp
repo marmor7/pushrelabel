@@ -7,5 +7,11 @@ EdgeEntry::EdgeEntry(int end, int cap, EdgeEntry* prev)
 	flow = 0;
 	nextEdge = NULL;
 	prevEdge = prev;
-	otherEdge = NULL; //TODO: create the opposite edge
+	reverseEdge = NULL; //TODO: create the opposite edge
+}
+
+void EdgeEntry::push(int value)
+{
+	flow += value;
+	reverseEdge->incFlow(-value);
 }
