@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory=""
-				CommandArguments="2 4 4 5 temp"
+				CommandArguments="2 8 8 20 output.grp"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
