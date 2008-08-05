@@ -1,13 +1,13 @@
 #include "EdgeEntry.h"
 
-EdgeEntry::EdgeEntry(int end, int cap, EdgeEntry* prev)
+EdgeEntry::EdgeEntry(int end, int cap, int flw, EdgeEntry* prev)
 {
 	endPoint = end;
 	capacity = cap;
-	flow = 0;
+	flow = flw;
 	nextEdge = NULL;
 	prevEdge = prev;
-	reverseEdge = NULL; //TODO: create the opposite edge
+	reverseEdge = NULL;
 }
 
 void EdgeEntry::push(int value)
@@ -15,3 +15,9 @@ void EdgeEntry::push(int value)
 	flow += value;
 	reverseEdge->incFlow(-value);
 }
+
+void EdgeEntry::setReversed(EdgeEntry* other)
+{
+	reverseEdge = other;
+}
+

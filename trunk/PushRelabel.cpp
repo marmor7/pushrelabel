@@ -25,8 +25,14 @@ int PushRelabel::calc(Graph* gr)
 	//Put the source in the pool
 	g->getPool()->addNode(&nodeArr[g->getSource()]);
 
+	if (DEBUG >= LOG_2)
+		g->debugDump();
+
 	//Calc pre-flow
 	preflow();
+
+	if (DEBUG >= LOG_2)
+		g->debugDump();
 
 	cout << "Max flow value is " << nodeArr[g->getTarget()].getExcess() << endl;
 	//Reset the distance labels - this time from the source
@@ -98,6 +104,12 @@ int PushRelabel::updateLabels(int source)
 		}
 	}
 
+	if (DEBUG >= LOG_2)
+	{
+		for (int i = 1; i <= g->getNodesNum(); i++)
+			cout << i << ": " << nodeArr[i].getLabel() << "\t";
+	}
+
 	cout << endl;
 	return 0;
 }
@@ -127,8 +139,8 @@ int PushRelabel::discharge(Node* node)
 
 	while ((cur != NULL) && (node->getExcess() > 0))
 	{
-		//check if the arc is admissible
-		if (isAdmissible(node, cur))
+		//check if the arc is admissible (not saturated and label is 1 + end node label)
+		if (isAdmissible(node, cur) && (cur->getEndPoint() != g->getSource()))
 		{
 			// If the excess of the end node is 0, we add it to the pool
 			// (nodes with excess 0 are not in the pool)
@@ -150,7 +162,7 @@ int PushRelabel::discharge(Node* node)
 	if (search) 
 		updateLabels(g->getSource());
 
-	if (node->getExcess() > 0 && node->getID() != g->getSource())
+	if (node->getExcess() > 0)
 		relabel(node);
 
 	return 0;
@@ -167,7 +179,8 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 	if (DEBUG >= LOG_1)
 		cout << "push from " << start << " to " 
 		<< nodeArr[edge->getEndPoint()].getID() << 
-		" (" << value << "), excess now: ";
+		" (" << value << "), excess was: " <<
+		Utils::printValue(nodeArr[edge->getEndPoint()].getExcess()) << ", excess now: ";
 
 	edge->push(value);
 	nodeArr[edge->getEndPoint()].incExcess(value);
@@ -175,11 +188,7 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 
 	if (DEBUG >= LOG_1)
 	{
-		int tmp = nodeArr[edge->getEndPoint()].getExcess();
-		if (tmp == INFINITY)
-			cout << "INF" << endl;
-		else
-			cout << nodeArr[edge->getEndPoint()].getExcess() << endl;
+		cout << Utils::printValue(nodeArr[edge->getEndPoint()].getExcess()) << endl;
 	}
 	return 0;
 }
@@ -200,7 +209,7 @@ int PushRelabel::relabel(Node* node)
 		cur = cur->getNext();
 	}
 
-	if ((min == INFINITY) || (min >= 11))
+	if ((min == INFINITY) || (min >= g->getNodesNum()))
 		node->setLabel(INFINITY);
 	else 
 	{
@@ -268,6 +277,7 @@ int PushRelabel::discharge_back(Node *node)
 
 				end_point->incExcess(quantity);
 				extra -= quantity;
+				node->decExcess(quantity);
 			}
 			edge = edge->getNext();
 		}

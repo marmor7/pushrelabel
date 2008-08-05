@@ -6,6 +6,8 @@
 
 typedef long long int llint;
 
+#define STATS
+
 static char *
 getNextWord (char *line, char *word)
 {
@@ -1274,7 +1276,7 @@ main(int argc, char ** argv)
 {
 
 	printf ("c Pseudoflow algorithm for parametric min cut (version 1.0)\n");
-	readDimacsFileCreateList ("4X4X5.grp");
+	readDimacsFileCreateList ("8X8_20.grp");
 
 #ifdef PROGRESS
 	printf ("c Finished reading file.\n"); fflush (stdout);

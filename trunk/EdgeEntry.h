@@ -1,5 +1,9 @@
 #pragma once
+#include "Utils.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 
 class EdgeEntry
 {
@@ -8,7 +12,7 @@ public:
 
 	int getEndPoint() { return endPoint; }
 	int getCapacity() { return capacity; }
-	void incFlow(int value) { flow += value; }
+	void incFlow(signed int value) { flow += value; }
 	int getFlow() { return flow; }
 	bool isSaturated() { return (flow == capacity); }
 	int getResCapacity() { return (capacity - flow); }	
@@ -16,15 +20,15 @@ public:
 	EdgeEntry* getNext() { return nextEdge; }
 	EdgeEntry* getPrev() { return prevEdge; }
 	EdgeEntry* getReverse() { return reverseEdge; }
+	void setReversed(EdgeEntry* other);
 
-	EdgeEntry(int end, int cap, EdgeEntry* prev);
-
+	EdgeEntry(int end, int cap, int flow, EdgeEntry* prev);
 	EdgeEntry *nextEdge;
     EdgeEntry *prevEdge;
-    EdgeEntry *reverseEdge; //the reversed edge
 
 private:
 	int endPoint;
     int capacity; //label
-    int flow;     //label2
+    signed int flow;     //label2
+    EdgeEntry *reverseEdge; //the reversed edge
 };
