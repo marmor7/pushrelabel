@@ -91,12 +91,12 @@ int Graph::readGraph(string file)
 				pos2 = line.find_first_of(" ", pos + 1);
 				cap = atoi(line.substr(pos, line.length()).c_str());
 				
-				edge = new EdgeEntry(to, cap, 
+				edge = new EdgeEntry(to, cap, 0, 
 					nodeArray[nodeId].getLastEdge());
-				reverse = new EdgeEntry(nodeId, cap, 
+				reverse = new EdgeEntry(nodeId, cap, cap,
 					nodeArray[to].getLastEdge());
-				reverse->reverseEdge = edge;
-				edge->reverseEdge = reverse;
+				reverse->setReversed(edge);
+				edge->setReversed(reverse);
 
 				nodeArray[nodeId].addEdge(edge);
 				nodeArray[to].addEdge(reverse);
@@ -125,6 +125,19 @@ int Graph::printGraph ()
 	}
 
 	cout << "Done printing" << endl;
+
+	return 0;
+}
+
+int Graph::debugDump()
+{
+	cout << "src: " << sourceID << ", dst: " << targetID << endl;
+	for (int i = 0; i < nodesNum; i++)
+	{
+		nodeArray[i].debugNodeDump();
+	}
+
+	cout << "Debug end" << endl;
 
 	return 0;
 }

@@ -19,14 +19,10 @@ public:
 	void setDegree(int deg) { degree = deg; }
 	int getLabel() { return label; }
 	void setLabel(int lab) { label = lab; }
-	int getX() { return x; }
-	void setX(int newx) { x = newx; }
-	int getY() { return y; }
-	void setY(int newy) { y = newy; }
 	int getExcess() { return excess; }
 	void setExcess(int exc) { excess = exc; }
 	void incExcess(int value) { excess += value; }
-	void decExcess(int value) { excess -= value; }
+	void decExcess(int value);
 	int getID() {return id; }
 	void setID(int node_id) { id = node_id; }
 	EdgeEntry* getAdjList() { return adjList; }
@@ -34,12 +30,11 @@ public:
 
 	void addEdge(EdgeEntry* edge);
 	void printNode();
+	void debugNodeDump();
 
 private :
 	int degree;
     unsigned int label;
-    int x;
-    int y;
 	int excess;
 	int id;
     EdgeEntry *adjList;

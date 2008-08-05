@@ -1241,6 +1241,12 @@ void main(int argc, char* argv[])
 	dim2 = atoi(argv[3]);
 	range = atoi(argv[4]);
 
+	//TMP
+	fct = 2;
+	dim1 = 8;
+	dim2 = 8;
+	range = 20;
+
 	if ((f = fopen(argv[5], "w")) == NULL)
 		Barf("File Error");
 

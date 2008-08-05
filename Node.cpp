@@ -14,11 +14,17 @@ Node::Node()
 	degree = 0;
     label = 0;
 	id = 0;
-    x = 0; //TODO: WHY?
-    y = 0; //TODO: WHY?
 	excess = 0;
-	adjList = new EdgeEntry(-1, -1, NULL);
+	adjList = new EdgeEntry(0, 0, 0, NULL);
 	lastEdge = adjList;
+}
+
+void Node::decExcess(int value)
+{
+	if (excess < value)
+		cout << "BUG";
+	else
+		excess -= value; 
 }
 
 void Node::printNode()
@@ -29,5 +35,14 @@ void Node::printNode()
 		cout << listPtr->getEndPoint() << " (" << listPtr->getCapacity() << ")" << ", ";
 		listPtr = listPtr->getNext();
 	}
+	cout << endl;
+}
+
+void Node::debugNodeDump()
+{
+	cout << getID() << ": ";
+	cout << getDegree() << ", \t";
+	cout << Utils::printValue(getLabel()) << ", \t";
+	cout << getExcess();
 	cout << endl;
 }
