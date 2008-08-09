@@ -33,8 +33,8 @@ int main(int argc, char **argv)
 	PushRelabel::calc(g6);
 	Graph *g7 = new Graph("30X30.grp");
 	PushRelabel::calc(g7);
-	/*Graph *g8 = new Graph("100X100.grp");
-	PushRelabel::calc(g8);*/
+	Graph *g8 = new Graph("100X100.grp");
+	PushRelabel::calc(g8);
 	
 
 	printf("Done\n");

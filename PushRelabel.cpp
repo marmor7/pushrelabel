@@ -65,9 +65,9 @@ int PushRelabel::updateLabels(int source)
 	nodeQueue.push(LEVEL_UP);
 	nodeArr[source].setLabel(QUEUE_NODE);
 
-	cout << "Updating Labels" << endl;
+	if (DEBUG >= LOG_2)
+		cout << "Updating Labels" << endl;
 
-	//Set distance to level
 	while (!nodeQueue.empty())
 	{
 		cur = nodeQueue.front();
@@ -176,7 +176,7 @@ bool PushRelabel::isAdmissible(Node* start, EdgeEntry* edge)
 
 int PushRelabel::push(int start, EdgeEntry* edge, int value)
 {
-	if (DEBUG >= LOG_1)
+	if (DEBUG >= LOG_2)
 		cout << "push from " << start << " to " 
 		<< nodeArr[edge->getEndPoint()].getID() << 
 		" (" << value << "), excess was: " <<
@@ -186,7 +186,7 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 	nodeArr[edge->getEndPoint()].incExcess(value);
 	nodeArr[start].decExcess(value);
 
-	if (DEBUG >= LOG_1)
+	if (DEBUG >= LOG_2)
 	{
 		cout << Utils::printValue(nodeArr[edge->getEndPoint()].getExcess()) << endl;
 	}
@@ -195,7 +195,7 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 
 int PushRelabel::relabel(Node* node)
 {
-	if (DEBUG >= LOG_1)
+	if (DEBUG >= LOG_2)
 		cout << "relabel " << node->getID() << " from: " << node->getLabel();
 	int min = INFINITY;
 	EdgeEntry* cur = node->getAdjList()->getNext();
@@ -217,7 +217,7 @@ int PushRelabel::relabel(Node* node)
 		g->getPool()->addNode(node);
 	}
 
-	if (DEBUG >= LOG_1)
+	if (DEBUG >= LOG_2)
 		cout << " to: " << (min == INFINITY ? INFINITY : min+1) << endl;
 
 	return 0;
@@ -225,6 +225,13 @@ int PushRelabel::relabel(Node* node)
 
 int PushRelabel::flow()
 {
+	if (DEBUG >= LOG_1) //Print the excess of each node
+	{
+		cout << "Excess before flow" << endl;
+		for (int i=0 ; i<g->getNodesNum() ; i++)
+			if (nodeArr[i+1].getExcess() > 0)
+				cout << "Node :" << i+1 << " Excess :" << nodeArr[i+1].getExcess() << endl;
+	}
 	NodePool* pool = g->getPool();
 	while (!pool->isEmpty())
 	{
@@ -233,6 +240,7 @@ int PushRelabel::flow()
 
 	if (DEBUG >= LOG_1) //Print the excess of each node
 	{
+		cout << "Excess after flow" << endl;
 		for (int i=0 ; i<g->getNodesNum() ; i++)
 			if (nodeArr[i+1].getExcess() > 0)
 				cout << "Node :" << i+1 << " Excess :" << nodeArr[i+1].getExcess() << endl;
@@ -260,9 +268,9 @@ int PushRelabel::discharge_back(Node *node)
 		edge = node->getAdjList();
 		while (edge != NULL && extra > 0) 
 		{
-			if ((edge->getFlow() < 0) && (nodeArr[edge->getEndPoint()].getLabel() == level)) 
+			if ((edge->getFlow() < edge->getCapacity()) && (nodeArr[edge->getEndPoint()].getLabel() == level)) 
 			{
-				quantity = -edge->getFlow();
+				quantity = edge->getCapacity()-edge->getFlow();
 				if (quantity > extra) 
 					quantity = extra;
 				edge->push(quantity);
@@ -307,7 +315,8 @@ int PushRelabel::findClosestPushBack(Node* node)
     int min = INFINITY;
 
 	while (edge!=NULL) {
-		if (edge->getFlow() < 0) {
+		if ((edge->getFlow() < edge->getCapacity()) && edge->isReverseEdge()) 
+		{
 			end_point = &nodeArr[edge->getEndPoint()];
 			if (end_point->getLabel() < min)
 				min = end_point->getLabel();
