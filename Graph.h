@@ -24,6 +24,8 @@ public:
 	int debugDump();
 	Node* getNodeArray() { return nodeArray; }
 
+	int incEdgeCapacity(int from, int to, int value);
+
 private:
 	int sourceID;
 	int targetID;

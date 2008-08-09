@@ -11,6 +11,10 @@ public:
 	~PushRelabel(void);
 
 	static int calc(Graph* g);
+	static int recalc(Graph* g);
+
+	static int numOfPushes;
+	static int numOfRelables;
 
 private:
 	static int updateLabels(int source);

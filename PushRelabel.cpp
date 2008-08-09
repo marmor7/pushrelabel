@@ -1,5 +1,6 @@
 #include "PushRelabel.h"
 #include <algorithm>
+#include <ctime>
 
 #define LEVEL_UP -1
 #define NEW_NODE -2
@@ -8,16 +9,121 @@
 //Static Members
 Graph* PushRelabel::g;
 Node* PushRelabel::nodeArr;
+int PushRelabel::numOfPushes;
+int PushRelabel::numOfRelables;
+
 
 int PushRelabel::calc(Graph* gr)
 {
 	g = gr;
 	nodeArr = g->getNodeArray();
+
 	if (DEBUG >= LOG_3)
 		g->printGraph();
 
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer [80];
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Time is " << asctime (timeinfo);
+
 	//Traverse all nodes (BFS) and initialize distance labels
 	updateLabels(g->getTarget());
+
+	//Set source's excess flow
+	nodeArr[g->getSource()].setExcess(INFINITY);
+
+	//Put the source in the pool
+	g->getPool()->addNode(&nodeArr[g->getSource()]);
+
+	if (DEBUG >= LOG_2)
+		g->debugDump();
+
+	PushRelabel::numOfPushes = 0;
+	PushRelabel::numOfRelables = 0;
+
+	//Calc pre-flow
+	preflow();
+
+	if (DEBUG >= LOG_2)
+		g->debugDump();
+
+	if (DEBUG >= LOG_1){
+		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
+		cout << "# relables: " << PushRelabel::numOfRelables << endl;
+	}
+
+	int maxFlow = nodeArr[g->getTarget()].getExcess();
+	cout << "Max flow value is " << maxFlow << endl;
+	//Reset the distance labels - this time from the source
+	updateLabels(g->getSource());
+
+	//Enqueue all the nodes with Excess > 0
+	assert(g->getPool()->isEmpty()); //At this point the queue should be empty
+	for (int i=0 ; i< g->getNodesNum() ; i++){ //No +1 here because we don't want the sink
+		if (nodeArr[i].getExcess() > 0){
+			g->getPool()->addNode(&nodeArr[i]);
+		}
+	}
+
+	//TMP!!!:
+	cout << "seek... ";
+	for (int i=2; i< g->getNodesNum() ; i++){ //TMP!!!!!
+		if (nodeArr[i].getExcess() > 0){
+			//seek saturated edges
+			EdgeEntry* list = nodeArr[i].getAdjList();
+			while (list != NULL){
+				list = list->getNext(); //1st call skips dummy
+				if (list->getResCapacity() == 0){
+					cout << "node " << i << " excess " << 
+					nodeArr[i].getExcess() << ".  " << i << "->" << 
+					list->getEndPoint() << ": " << list->getCapacity() << endl;
+					break;
+				}
+			}
+			if (list->getResCapacity() == 0){
+				break;
+			}
+		}
+	}
+	cout << "done seeking" << endl;
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Time is " << asctime (timeinfo);
+
+	cout << "preflow done..." << "calc flow..." << endl;
+
+	//pre-flow to flow (remove excesses)
+	flow();
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Time is " << asctime (timeinfo);
+
+	return maxFlow;
+}
+
+int PushRelabel::recalc(Graph* gr)
+{
+	g = gr;
+	nodeArr = g->getNodeArray();
+
+	PushRelabel::numOfPushes = 0;
+	PushRelabel::numOfRelables = 0;
+
+	if (DEBUG >= LOG_3)
+		g->printGraph();
+
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer [80];
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Time is " << asctime (timeinfo);
 
 	//Set source's excess flow
 	nodeArr[g->getSource()].setExcess(INFINITY);
@@ -34,7 +140,13 @@ int PushRelabel::calc(Graph* gr)
 	if (DEBUG >= LOG_2)
 		g->debugDump();
 
-	cout << "Max flow value is " << nodeArr[g->getTarget()].getExcess() << endl;
+	if (DEBUG >= LOG_1){
+		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
+		cout << "# relables: " << PushRelabel::numOfRelables << endl;
+	}
+
+	int maxFlow = nodeArr[g->getTarget()].getExcess();
+	cout << "Max flow value is " << maxFlow << endl;
 	//Reset the distance labels - this time from the source
 	updateLabels(g->getSource());
 
@@ -44,11 +156,22 @@ int PushRelabel::calc(Graph* gr)
 		if (nodeArr[i].getExcess() > 0)
 			g->getPool()->addNode(&nodeArr[i]);
 
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Time is " << asctime (timeinfo);
+
+	cout << "preflow done..." << " calc flow..." << endl;
+
 	//pre-flow to flow (remove excesses)
 	flow();
 
-	return 0;
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	cout << "Time is " << asctime (timeinfo);
+
+	return maxFlow;
 }
+
 
 int PushRelabel::updateLabels(int source)
 {
@@ -110,7 +233,6 @@ int PushRelabel::updateLabels(int source)
 			cout << i << ": " << nodeArr[i].getLabel() << "\t";
 	}
 
-	cout << endl;
 	return 0;
 }
 
@@ -176,6 +298,7 @@ bool PushRelabel::isAdmissible(Node* start, EdgeEntry* edge)
 
 int PushRelabel::push(int start, EdgeEntry* edge, int value)
 {
+	PushRelabel::numOfPushes++;
 	if (DEBUG >= LOG_2)
 		cout << "push from " << start << " to " 
 		<< nodeArr[edge->getEndPoint()].getID() << 
@@ -195,6 +318,7 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 
 int PushRelabel::relabel(Node* node)
 {
+	PushRelabel::numOfRelables++;
 	if (DEBUG >= LOG_2)
 		cout << "relabel " << node->getID() << " from: " << node->getLabel();
 	int min = INFINITY;
@@ -225,7 +349,7 @@ int PushRelabel::relabel(Node* node)
 
 int PushRelabel::flow()
 {
-	if (DEBUG >= LOG_1) //Print the excess of each node
+	if (DEBUG >= LOG_2) //Print the excess of each node
 	{
 		cout << "Excess before flow" << endl;
 		for (int i=0 ; i<g->getNodesNum() ; i++)
@@ -238,7 +362,7 @@ int PushRelabel::flow()
 		discharge_back(pool->getNode());
 	}
 
-	if (DEBUG >= LOG_1) //Print the excess of each node
+	if (DEBUG >= LOG_2) //Print the excess of each node
 	{
 		cout << "Excess after flow" << endl;
 		for (int i=0 ; i<g->getNodesNum() ; i++)
