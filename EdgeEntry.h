@@ -21,6 +21,7 @@ public:
 	EdgeEntry* getPrev() { return prevEdge; }
 	EdgeEntry* getReverse() { return reverseEdge; }
 	void setReversed(EdgeEntry* other);
+	bool isReverseEdge();
 
 	EdgeEntry(int end, int cap, int flow, EdgeEntry* prev);
 	EdgeEntry *nextEdge;
