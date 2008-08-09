@@ -12,6 +12,7 @@ public:
 
 	int getEndPoint() { return endPoint; }
 	int getCapacity() { return capacity; }
+	void incCapacity(int value) { capacity += value; }
 	void incFlow(signed int value) { flow += value; }
 	int getFlow() { return flow; }
 	bool isSaturated() { return (flow == capacity); }
