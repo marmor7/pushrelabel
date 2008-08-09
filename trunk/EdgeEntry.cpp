@@ -21,3 +21,10 @@ void EdgeEntry::setReversed(EdgeEntry* other)
 	reverseEdge = other;
 }
 
+bool EdgeEntry::isReverseEdge()
+{
+	int source, target;
+	target = endPoint;
+	source = reverseEdge->getEndPoint();
+	return (source > target);
+}
