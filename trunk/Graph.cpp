@@ -117,22 +117,24 @@ int Graph::incEdgeCapacity(int from, int to, int value)
 {
 	Node node = getNodeArray()[from];
 	EdgeEntry* list = node.getAdjList();
-	while (list != NULL){
+	if (list != NULL)
 		list = list->getNext(); //1st call skips dummy
+	while (list != NULL){
 		if (list->getEndPoint() == to)
 			break;
-
+		list = list->getNext(); //1st call skips dummy
 	}
 	if (list != NULL){
 		if (DEBUG >= LOG_1)
-			cout << "increasing edge 2->60 capacity from " <<
+			cout << "increasing edge " << from << "->" << to << " capacity from " <<
 					list->getCapacity() << " to " << list->getCapacity()+value << endl;
 		list->incCapacity(value);
 		return 0;
 	}
 
-	cout << "Requested edge from " << from << 
-		" to " << to << " wasn't found." << endl;
+	if (DEBUG >= LOG_2)
+		cout << "Requested edge from " << from << 
+				" to " << to << " wasn't found." << endl;
 
 	return 1;	
 }

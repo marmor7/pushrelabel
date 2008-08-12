@@ -10,8 +10,8 @@ public:
 	PushRelabel(void);
 	~PushRelabel(void);
 
-	static int calc(Graph* g);
-	static int recalc(Graph* g);
+	static int calc(Graph* g, Node* preflowNodes);
+	static int recalc(Graph* gr, Node* preflowNodes, int from, int to, int by);
 
 	static int numOfPushes;
 	static int numOfRelables;

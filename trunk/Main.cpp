@@ -30,17 +30,35 @@ int main(int argc, char **argv)
 	Graph *g5 = new Graph("8X8.grp");
 	PushRelabel::calc(g5);
 	Graph *g6 = new Graph("10X10.grp");
-	PushRelabel::calc(g6);*/
+	PushRelabel::calc(g6);
 	Graph *g7 = new Graph("30X30.grp");
 	PushRelabel::calc(g7);
-	//Graph *g8 = new Graph("100X100.grp");
-	//PushRelabel::calc(g8);
+	Graph *g8 = new Graph("100X100.grp");
+	PushRelabel::calc(g8);*/
 
-	cout << "recalc" << endl;
-	cout << "======" << endl;
-	g7->incEdgeCapacity(2, 60, 10000);
+	int newMaxFlow;
+	Node* preflowNodes;
+	Graph *g = new Graph("30X30.grp");
+	preflowNodes = new Node[g->getNodesNum() + 1];
+	int max = PushRelabel::calc(g, preflowNodes);
 
-	int newMaxFlow = PushRelabel::calc(g7);
+	if (!g->incEdgeCapacity(614, 648, 1000000)){
+		newMaxFlow = PushRelabel::recalc(g, preflowNodes, 614, 648, 100000);
+		cout << newMaxFlow << endl;
+	}
+
+	/*for (int i=900; i > 0; i--){
+		for (int j=900; j > 0; j--){
+			if (!g->incEdgeCapacity(i, j, 10000)){
+				cout << "recalc " << i << " " << j << endl;
+				newMaxFlow = PushRelabel::calc(g);
+				if (newMaxFlow > max)
+					break;
+			}
+		}
+		if (newMaxFlow > max)
+			break;
+	}*/
 
 	printf("Done\n");
 	return(0);

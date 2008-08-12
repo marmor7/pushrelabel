@@ -1276,7 +1276,7 @@ main(int argc, char ** argv)
 {
 
 	printf ("c Pseudoflow algorithm for parametric min cut (version 1.0)\n");
-	readDimacsFileCreateList ("8X8_20.grp");
+	readDimacsFileCreateList ("30X30_recalc.grp");
 
 #ifdef PROGRESS
 	printf ("c Finished reading file.\n"); fflush (stdout);
