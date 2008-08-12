@@ -13,7 +13,7 @@ int PushRelabel::numOfPushes;
 int PushRelabel::numOfRelables;
 
 
-int PushRelabel::calc(Graph* gr)
+int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 {
 	g = gr;
 	nodeArr = g->getNodeArray();
@@ -47,10 +47,14 @@ int PushRelabel::calc(Graph* gr)
 	//Calc pre-flow
 	preflow();
 
+	//Backup the preflow nodes in an array, for recalc.
+	if (preflowNodes)
+		memcpy(preflowNodes, nodeArr, sizeof(Node)*g->getNodesNum());
+
 	if (DEBUG >= LOG_2)
 		g->debugDump();
 
-	if (DEBUG >= LOG_1){
+	if (DEBUG >= LOG_NONE){
 		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
 		cout << "# relables: " << PushRelabel::numOfRelables << endl;
 	}
@@ -69,26 +73,26 @@ int PushRelabel::calc(Graph* gr)
 	}
 
 	//TMP!!!:
-	cout << "seek... ";
-	for (int i=2; i< g->getNodesNum() ; i++){ //TMP!!!!!
+	/*cout << "seek... ";
+	for (int i=g->getNodesNum()-1; i>0 ; i--){ //TMP!!!!!
 		if (nodeArr[i].getExcess() > 0){
 			//seek saturated edges
 			EdgeEntry* list = nodeArr[i].getAdjList();
+			list = list->getNext(); //1st call skips dummy
 			while (list != NULL){
-				list = list->getNext(); //1st call skips dummy
 				if (list->getResCapacity() == 0){
 					cout << "node " << i << " excess " << 
 					nodeArr[i].getExcess() << ".  " << i << "->" << 
 					list->getEndPoint() << ": " << list->getCapacity() << endl;
 					break;
 				}
+				list = list->getNext();
 			}
-			if (list->getResCapacity() == 0){
+			if ((list != NULL) && (list->getResCapacity() == 0)){
 				break;
 			}
 		}
-	}
-	cout << "done seeking" << endl;
+	}*/
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
@@ -106,10 +110,14 @@ int PushRelabel::calc(Graph* gr)
 	return maxFlow;
 }
 
-int PushRelabel::recalc(Graph* gr)
+int PushRelabel::recalc(Graph* gr, Node* preflowNodes, int from, int to, int by)
 {
+	assert(gr != NULL);
+	assert(preflowNodes != NULL);
+
 	g = gr;
 	nodeArr = g->getNodeArray();
+	memcpy(nodeArr, preflowNodes, sizeof(Node)*g->getNodesNum());
 
 	PushRelabel::numOfPushes = 0;
 	PushRelabel::numOfRelables = 0;
@@ -126,10 +134,15 @@ int PushRelabel::recalc(Graph* gr)
 	cout << "Time is " << asctime (timeinfo);
 
 	//Set source's excess flow
-	nodeArr[g->getSource()].setExcess(INFINITY);
+	//nodeArr[g->getSource()].setExcess(INFINITY);
 
 	//Put the source in the pool
-	g->getPool()->addNode(&nodeArr[g->getSource()]);
+	g->getPool()->addNode(&nodeArr[from]);
+	//TBD? g->getPool()->addNode(&nodeArr[g->getSource()]);
+
+	//nodeArr[g->getSource()].setExcess(INFINITY); //TMP
+	nodeArr[from].setExcess(by); //TMP
+	nodeArr[from].setLabel(nodeArr[from].getLabel()+1);
 
 	if (DEBUG >= LOG_2)
 		g->debugDump();
@@ -140,7 +153,7 @@ int PushRelabel::recalc(Graph* gr)
 	if (DEBUG >= LOG_2)
 		g->debugDump();
 
-	if (DEBUG >= LOG_1){
+	if (DEBUG >= LOG_NONE){
 		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
 		cout << "# relables: " << PushRelabel::numOfRelables << endl;
 	}
