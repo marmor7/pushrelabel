@@ -1,5 +1,6 @@
 #pragma once
 #include "FifoQueue.h"
+#include "PriorityQueue.h"
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
