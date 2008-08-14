@@ -22,13 +22,8 @@ int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 	if (DEBUG >= LOG_3)
 		g->printGraph();
 
-	time_t rawtime;
-	struct tm * timeinfo;
-	char buffer [80];
-
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	cout << "Time is " << asctime (timeinfo);
+	clock_t start, finish;
+	start = clock();
 
 	//Traverse all nodes (BFS) and initialize distance labels
 	updateLabels(g->getTarget());
@@ -95,18 +90,13 @@ int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 		}
 	}*/
 
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	cout << "Time is " << asctime (timeinfo);
-
-	cout << "preflow done..." << "calc flow..." << endl;
-
 	//pre-flow to flow (remove excesses)
 	flow();
 
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	cout << "Time is " << asctime (timeinfo);
+	finish = clock();
+
+	
+	cout << "Total clocks: " << (finish - start) << endl;
 
 	return maxFlow;
 }
@@ -224,6 +214,8 @@ int PushRelabel::updateLabels(int source)
 
 			//Update Label
 			PushRelabel::nodeArr[cur].setLabel(level);
+			if (cur == g->getSource())
+				g->setMaxDistance(level);
 
 			//Enqueue all children
 			EdgeEntry* edgePtr = PushRelabel::nodeArr[cur].getAdjList();
@@ -347,7 +339,7 @@ int PushRelabel::relabel(Node* node)
 		cur = cur->getNext();
 	}
 
-	if ((min == INFINITY) || (min >= g->getNodesNum()))
+	if ((min == INFINITY) || (min >= g->getMaxDistance()))
 		node->setLabel(INFINITY);
 	else 
 	{
