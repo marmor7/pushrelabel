@@ -12,9 +12,10 @@ using namespace std;
 class Node
 {
 public:
-
 	Node();
 
+	bool operator> (const Node* node) const;
+	bool operator< (const Node* node) const;
 	int getDegree() { return degree; }
 	void setDegree(int deg) { degree = deg; }
 	int getLabel() { return label; }
