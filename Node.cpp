@@ -1,6 +1,7 @@
 #include "Node.h"
 
 
+
 void Node::addEdge(EdgeEntry* edge) 
 {
 	assert(lastEdge); //lastEdge is never null (initialized with dummy)
@@ -45,4 +46,14 @@ void Node::debugNodeDump()
 	cout << Utils::printValue(getLabel()) << ", \t";
 	cout << getExcess();
 	cout << endl;
+}
+
+bool Node::operator>(const Node* node) const
+{
+	return label > node->label;   
+}
+
+bool Node::operator<(const Node* node) const
+{
+	return label < node->label;   
 }

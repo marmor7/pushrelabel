@@ -2,8 +2,9 @@
 
 Graph::Graph(string file)
 {
+	cout << endl << "Creating graph from file " << file << endl;
 	readGraph(file);
-	pool = new FifoQueue();
+	pool = new HighLabelQueue(nodesNum);
 }
 
 Graph::~Graph(void)
@@ -54,7 +55,8 @@ int Graph::readGraph(string file)
 			case 'n':
 				ch = line[line.find_last_of(" ") + 1];
 				nodeId = atoi(line.substr(line.find_first_of(" "), line.find_last_of(" ")).c_str());
-				cout << ch << " " << nodeId << endl;
+				if (DEBUG >= LOG_1)
+					cout << ch << " " << nodeId << endl;
 				if (ch == 's')
 					sourceID = nodeId;
 				else if (ch == 't')
@@ -73,8 +75,8 @@ int Graph::readGraph(string file)
 				pos = pos2;
 				pos2 = line.find_first_of(" ", pos + 1);
 				edgesNum = atoi(line.substr(pos, line.length()).c_str());
-
-				cout << nodesNum << " " << edgesNum << endl;
+				if (DEBUG >= LOG_1)
+					cout << nodesNum << " " << edgesNum << endl;
 
 				nodeArray = new Node[nodesNum + 1]; //Adding 1 to conform with nodes in graph file
 				for (int i = 0; i <= nodesNum ; i++)
