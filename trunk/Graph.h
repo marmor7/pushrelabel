@@ -1,6 +1,7 @@
 #pragma once
 #include "FifoQueue.h"
 #include "PriorityQueue.h"
+#include "HighLabelQueue.h"
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +19,9 @@ public:
 	int getTarget() { return targetID; }
 	int getNodesNum() { return nodesNum; }
 	int getEdgesNum() { return edgesNum; }
+	int getMaxDistance() { return maxDistance; }
+	void setMaxDistance(int max) { maxDistance = max; }
+
 	NodePool* getPool() { return pool; }
 
 	int readGraph (string file);
@@ -32,6 +36,7 @@ private:
 	int targetID;
 	int nodesNum;
 	int edgesNum;
+	int maxDistance;
 	NodePool* pool;
 	Node* nodeArray;
 };
