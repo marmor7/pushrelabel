@@ -236,15 +236,16 @@
 			>
 		</File>
 		<File
+			RelativePath=".\HighLabelQueue.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\HighLabelQueue.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Main.cpp"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-				/>
-			</FileConfiguration>
 		</File>
 		<File
 			RelativePath=".\Node.cpp"

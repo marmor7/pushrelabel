@@ -13,6 +13,8 @@ HighLabelQueue::~HighLabelQueue(void)
 
 void HighLabelQueue::addNode(Node* node)
 {
+	if (node->getLabel() == INFINITY)
+		return;
 	if (arrayPtr < node->getLabel())
 		arrayPtr = node->getLabel();
 	listArray[node->getLabel()].insertFront(node);

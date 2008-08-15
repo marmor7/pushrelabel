@@ -1,0 +1,6 @@
+Name,Inclusive Samples,Exclusive Samples,Inclusive Samples %,Exclusive Samples %,
+"kernel32.dll",481,19,1.52,0.06,
+"ntdll.dll","3,141","3,141",9.90,9.90,
+"PushRelabel.exe","31,740","28,580",100.00,90.04,
+"SamplingRuntime.dll",7,0,0.02,0.00,
+"UNKNOWN",24,0,0.08,0.00,

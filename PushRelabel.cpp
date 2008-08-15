@@ -10,8 +10,8 @@
 //Static Members
 Graph* PushRelabel::g;
 Node* PushRelabel::nodeArr;
-int PushRelabel::numOfPushes;
-int PushRelabel::numOfRelables;
+unsigned long PushRelabel::numOfPushes;
+unsigned long PushRelabel::numOfRelables;
 
 
 int PushRelabel::calc(Graph* gr, Node* preflowNodes)
@@ -26,7 +26,7 @@ int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 	start = clock();
 
 	//Traverse all nodes (BFS) and initialize distance labels
-	updateLabels(g->getTarget());
+	updateLabels(true);
 
 	//Set source's excess flow
 	nodeArr[g->getSource()].setExcess(INFINITY);
@@ -58,7 +58,7 @@ int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 	int maxFlow = nodeArr[g->getTarget()].getExcess();
 	cout << "Max flow value is " << maxFlow << endl;
 	//Reset the distance labels - this time from the source
-	updateLabels(g->getSource());
+	updateLabels(false);
 
 	//Enqueue all the nodes with Excess > 0
 	assert(g->getPool()->isEmpty()); //At this point the queue should be empty
@@ -68,32 +68,27 @@ int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 		}
 	}
 
-	//TMP!!!:
-	/*cout << "seek... ";
-	for (int i=g->getNodesNum()-1; i>0 ; i--){ //TMP!!!!!
-		if (nodeArr[i].getExcess() > 0){
-			//seek saturated edges
-			EdgeEntry* list = nodeArr[i].getAdjList();
-			list = list->getNext(); //1st call skips dummy
-			while (list != NULL){
-				if (list->getResCapacity() == 0){
-					cout << "node " << i << " excess " << 
-					nodeArr[i].getExcess() << ".  " << i << "->" << 
-					list->getEndPoint() << ": " << list->getCapacity() << endl;
-					break;
-				}
-				list = list->getNext();
-			}
-			if ((list != NULL) && (list->getResCapacity() == 0)){
-				break;
-			}
-		}
-	}*/
-
 	//pre-flow to flow (remove excesses)
 	flow();
 
 	finish = clock();
+
+	// Try to find an edge for recalc
+	//updateLabels(true);
+	//for (int i=g->getNodesNum(); i > 0; i--){
+	//	for (int j=g->getNodesNum(); j > 0; j--){
+	//		if (!g->incEdgeCapacity(i, j, 10000)){
+	//			updateLabels(true);
+	//			if (nodeArr[g->getSource()].getLabel() < INFINITY)
+	//			{
+	//				cout << i << "->" << j << endl;
+	//				break;
+	//			}
+	//		}
+	//	}
+	//	if (nodeArr[g->getSource()].getLabel() < INFINITY)
+	//		break;
+	//}
 
 	
 	cout << "Total clocks: " << (finish - start) << endl;
@@ -110,30 +105,29 @@ int PushRelabel::recalc(Graph* gr, Node* preflowNodes, int from, int to, int by)
 	nodeArr = g->getNodeArray();
 	memcpy(nodeArr, preflowNodes, sizeof(Node)*g->getNodesNum());
 
+	//Traverse all nodes (BFS) and initialize distance labels
+	updateLabels(true);
+
 	PushRelabel::numOfPushes = 0;
 	PushRelabel::numOfRelables = 0;
+
+	//If sink is unreachable from the source (label = INF), then stop
+	if (nodeArr[g->getSource()].getLabel() == INFINITY)
+		return 0;
 
 	if (DEBUG >= LOG_3)
 		g->printGraph();
 
-	time_t rawtime;
-	struct tm * timeinfo;
-	char buffer [80];
-
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	cout << "Time is " << asctime (timeinfo);
-
-	//Set source's excess flow
-	//nodeArr[g->getSource()].setExcess(INFINITY);
+	clock_t start, middle, finish;
+	start = clock();
 
 	//Put the source in the pool
-	g->getPool()->addNode(&nodeArr[from]);
-	//TBD? g->getPool()->addNode(&nodeArr[g->getSource()]);
+	//g->getPool()->addNode(&nodeArr[from]);
+	g->getPool()->addNode(&nodeArr[g->getSource()]);
 
-	//nodeArr[g->getSource()].setExcess(INFINITY); //TMP
-	nodeArr[from].setExcess(by); //TMP
-	nodeArr[from].setLabel(nodeArr[from].getLabel()+1);
+	nodeArr[g->getSource()].setExcess(by); //TMP
+	//nodeArr[from].setExcess(by); //TMP
+	//nodeArr[from].setLabel(nodeArr[from].getLabel()+1);
 
 	if (DEBUG >= LOG_2)
 		g->debugDump();
@@ -152,7 +146,7 @@ int PushRelabel::recalc(Graph* gr, Node* preflowNodes, int from, int to, int by)
 	int maxFlow = nodeArr[g->getTarget()].getExcess();
 	cout << "Max flow value is " << maxFlow << endl;
 	//Reset the distance labels - this time from the source
-	updateLabels(g->getSource());
+	updateLabels(false);
 
 	//Enqueue all the nodes with Excess > 0
 	assert(g->getPool()->isEmpty()); //At this point the queue should be empty
@@ -160,25 +154,31 @@ int PushRelabel::recalc(Graph* gr, Node* preflowNodes, int from, int to, int by)
 		if (nodeArr[i].getExcess() > 0)
 			g->getPool()->addNode(&nodeArr[i]);
 
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	cout << "Time is " << asctime (timeinfo);
+	middle = clock();
+	cout << "Total ticks to preflow: " << middle - start << endl;
 
 	cout << "preflow done..." << " calc flow..." << endl;
 
 	//pre-flow to flow (remove excesses)
 	flow();
 
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	cout << "Time is " << asctime (timeinfo);
+	finish = clock();
+	cout << "Total ticks to flow: " << finish - start << endl;
+	cout << "Total ticks from preflow to flow: " << finish - middle << endl;
 
 	return maxFlow;
 }
 
 
-int PushRelabel::updateLabels(int source)
+int PushRelabel::updateLabels(bool fromTarget)
 {
+	int source;
+
+	if (fromTarget)
+		source = g->getTarget();
+	else
+		source = g->getSource();
+
 	queue<int> nodeQueue;
 	int cur;
 
@@ -193,7 +193,7 @@ int PushRelabel::updateLabels(int source)
 	nodeArr[source].setLabel(QUEUE_NODE);
 
 	if (DEBUG >= LOG_2)
-		cout << "Updating Labels" << endl;
+		cout << "Updating Labels..." << endl;
 
 	while (!nodeQueue.empty())
 	{
@@ -222,18 +222,22 @@ int PushRelabel::updateLabels(int source)
 			//Skip dummy
 			edgePtr = edgePtr->getNext();
 			while (edgePtr != NULL)
-			{
+			{				
 				if (nodeArr[edgePtr->getEndPoint()].getLabel() == NEW_NODE)
 				{
-					nodeQueue.push(edgePtr->getEndPoint());
+					//TBD
+					// if (((edgePtr->getFlow() != 0) && (fromTarget))
+					// || ((edgePtr->getResCapacity() != 0) && (!fromTarget)))
+						nodeQueue.push(edgePtr->getEndPoint());
 					nodeArr[edgePtr->getEndPoint()].setLabel(QUEUE_NODE);
 				}
+
 				edgePtr = edgePtr->getNext();
 			}
 		}
 	}
 
-	if (DEBUG >= LOG_2)
+	if (DEBUG >= LOG_3)
 	{
 		for (int i = 1; i <= g->getNodesNum(); i++)
 			cout << i << ": " << nodeArr[i].getLabel() << "\t";
@@ -288,7 +292,7 @@ int PushRelabel::discharge(Node* node)
 	}
 
 	if (search) 
-		updateLabels(g->getSource());
+		updateLabels(false);
 
 	if (node->getExcess() > 0)
 		relabel(node);
@@ -422,7 +426,7 @@ int PushRelabel::discharge_back(Node *node)
 	}
 
 	if (search) 
-		updateLabels(g->getSource());
+		updateLabels(false);
 	else 
 	{
 		if (extra == 0) 
