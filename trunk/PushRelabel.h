@@ -13,11 +13,11 @@ public:
 	static int calc(Graph* g, Node* preflowNodes);
 	static int recalc(Graph* gr, Node* preflowNodes, int from, int to, int by);
 
-	static int numOfPushes;
-	static int numOfRelables;
+	static unsigned long numOfPushes;
+	static unsigned long numOfRelables;
 
 private:
-	static int updateLabels(int source);
+	static int updateLabels(bool fromTarget);
 	static Graph *g;
 	static Node* nodeArr;
 

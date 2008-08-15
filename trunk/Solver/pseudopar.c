@@ -457,7 +457,7 @@ simpleInitialization (void)
 	labelCount[0] = (numNodes - 2) - labelCount[1];
 }
 
-static inline int 
+static int 
 addRelationship (Node *newParent, Node *child) 
 {
 	child->parent = newParent;
@@ -467,7 +467,7 @@ addRelationship (Node *newParent, Node *child)
 	return 0;
 }
 
-static inline void
+static void
 breakRelationship (Node *oldParent, Node *child) 
 {
 	Node *current;
@@ -515,7 +515,7 @@ merge (Node *parent, Node *child, Arc *newArc)
 }
 
 
-static inline void 
+static void 
 pushUpward (Arc *currentArc, Node *child, Node *parent, const int resCap) 
 {
 #ifdef STATS
@@ -542,7 +542,7 @@ pushUpward (Arc *currentArc, Node *child, Node *parent, const int resCap)
 }
 
 
-static inline void
+static void
 pushDownward (Arc *currentArc, Node *child, Node *parent, int flow) 
 {
 #ifdef STATS
@@ -1276,7 +1276,15 @@ main(int argc, char ** argv)
 {
 
 	printf ("c Pseudoflow algorithm for parametric min cut (version 1.0)\n");
-	readDimacsFileCreateList ("30X30_recalc.grp");
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer [80];
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	printf("Time is %s", asctime (timeinfo));
+
+	readDimacsFileCreateList ("440X440.grp");
 
 #ifdef PROGRESS
 	printf ("c Finished reading file.\n"); fflush (stdout);
@@ -1314,6 +1322,11 @@ main(int argc, char ** argv)
 #endif
 
 	freeMemory ();
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	printf("Time is %s", asctime (timeinfo));
+
 
 	return 0;
 }

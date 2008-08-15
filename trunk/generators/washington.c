@@ -22,7 +22,7 @@
 #define TRUE       1
 
 
-#define MAX_N     20000  
+#define MAX_N     200000  
 /* #define MAX_N 60 */
 
 #define MAX_CAP   100000000
@@ -1243,9 +1243,9 @@ void main(int argc, char* argv[])
 
 	//TMP
 	fct = 2;
-	dim1 = 8;
-	dim2 = 8;
-	range = 20;
+	dim1 = 440;
+	dim2 = 440;
+	range = 30000;
 
 	if ((f = fopen(argv[5], "w")) == NULL)
 		Barf("File Error");

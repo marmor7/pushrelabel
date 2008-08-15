@@ -35,7 +35,7 @@ public:
 
 private :
 	int degree;
-    unsigned int label;
+    int label;
 	int excess;
 	int id;
     EdgeEntry *adjList;

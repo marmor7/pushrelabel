@@ -10,17 +10,17 @@ class EdgeEntry
 public:
 	void push(int value);
 
-	int getEndPoint() { return endPoint; }
-	int getCapacity() { return capacity; }
-	void incCapacity(int value) { capacity += value; }
-	void incFlow(signed int value) { flow += value; }
-	int getFlow() { return flow; }
-	bool isSaturated() { return (flow == capacity); }
-	int getResCapacity() { return (capacity - flow); }	
+	inline int getEndPoint() { return endPoint; }
+	inline int getCapacity() { return capacity; }
+	inline void incCapacity(int value) { capacity += value; }
+	inline void incFlow(signed int value) { flow += value; }
+	inline int getFlow() { return flow; }
+	inline bool isSaturated() { return (flow == capacity); }
+	inline int getResCapacity() { return (capacity - flow); }	
 
-	EdgeEntry* getNext() { return nextEdge; }
-	EdgeEntry* getPrev() { return prevEdge; }
-	EdgeEntry* getReverse() { return reverseEdge; }
+	inline EdgeEntry* getNext() { return nextEdge; }
+	inline EdgeEntry* getPrev() { return prevEdge; }
+	inline EdgeEntry* getReverse() { return reverseEdge; }
 	void setReversed(EdgeEntry* other);
 	bool isReverseEdge();
 
