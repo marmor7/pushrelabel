@@ -5,7 +5,7 @@
 
 class HighLabelQueue : public NodePool
 {
-
+protected:
 	//the doubly linked list sub-class
 	class ListNode
 	{
@@ -28,19 +28,21 @@ class HighLabelQueue : public NodePool
 		}
 
 		void insertFront(Node* node);             
+		void insertBack(Node* node);             
 		Node* removeFront();
 		void insertBefore(Node* node,ListNode *nodeB);
 	};
 
 public:
 	HighLabelQueue(int node_num);
+	HighLabelQueue(void);
 	~HighLabelQueue(void);
 
 	void findNewPtr();
 	void addNode(Node* node);
 	Node* getNode();
 
-private:
+protected:
 	DList* listArray;
 	int arrayPtr;
 

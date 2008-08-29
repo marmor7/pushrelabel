@@ -28,8 +28,10 @@ public:
 	int printGraph();
 	int debugDump();
 	Node* getNodeArray() { return nodeArray; }
-
+	int dijkstraPath();
+	int dijkstra(int source_id, int* &dist);
 	int incEdgeCapacity(int from, int to, int value);
+	//int decEdgeCapacity(int from, int to, int value);
 
 private:
 	int sourceID;
@@ -39,4 +41,5 @@ private:
 	int maxDistance;
 	NodePool* pool;
 	Node* nodeArray;
+	bool** adjMatrix;
 };

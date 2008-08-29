@@ -1,5 +1,10 @@
 #include "HighLabelQueue.h"
 
+HighLabelQueue::HighLabelQueue(void)
+{
+
+}
+
 HighLabelQueue::HighLabelQueue(int node_num)
 {
 	listArray = new DList[node_num - 1];
@@ -63,7 +68,6 @@ void HighLabelQueue::DList::insertFront (Node* node)
 	}
 	else
 	{
-		ListNode *newNode;
 		newNode=new ListNode();
 		newNode->prev=NULL;
 		newNode->next =this->front;
@@ -73,6 +77,30 @@ void HighLabelQueue::DList::insertFront (Node* node)
 	}
 }
 
+//insert a ListNode after the back ListNode 
+void HighLabelQueue::DList::insertBack (Node* node)
+{
+	ListNode *newNode;
+	if(this->front==NULL)
+	{
+		newNode=new ListNode();
+		this->front=newNode;
+		this->back =newNode;
+		newNode->prev=NULL;
+		newNode->next=NULL;
+		newNode->node=node;
+
+	}
+	else
+	{
+		newNode=new ListNode();
+		newNode->next=NULL;
+		newNode->prev =this->back;
+		newNode->node =node;
+		this->back->next = newNode;
+		this->back = newNode;
+	}
+}
 
 //remove the front ListNode 
 Node* HighLabelQueue::DList::removeFront()
@@ -82,7 +110,9 @@ Node* HighLabelQueue::DList::removeFront()
 	ListNode* listNode = this->front;
 	this->front=this->front->next;
 	if (this->front != NULL)
-		this->front->prev=NULL;
+		this->front->prev = NULL;
+	else
+		this->back = NULL;
 
 	free (listNode);
 	return n;

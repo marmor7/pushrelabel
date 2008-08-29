@@ -13,6 +13,6 @@ public:
 	Node* getNode();
 
 private:
-	priority_queue<Node*,vector<Node*>, less<Node*>> nodeQueue;
+	priority_queue<Node*,vector<Node*>, greater<Node*>> nodeQueue;
 
 };
