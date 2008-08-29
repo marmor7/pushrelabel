@@ -4,7 +4,8 @@ Graph::Graph(string file)
 {
 	cout << endl << "Creating graph from file " << file << endl;
 	readGraph(file);
-	pool = new HighLabelQueue(nodesNum);
+	//pool = new HighLabelQueue(nodesNum);
+	pool = new FifoQueue();
 }
 
 Graph::~Graph(void)

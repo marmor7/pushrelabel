@@ -343,7 +343,7 @@ int PushRelabel::relabel(Node* node)
 		cur = cur->getNext();
 	}
 
-	if ((min == INFINITY) || (min >= g->getMaxDistance()))
+	if ((min == INFINITY) || (min >= g->getNodesNum()))
 		node->setLabel(INFINITY);
 	else 
 	{
