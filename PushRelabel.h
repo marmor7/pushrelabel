@@ -10,11 +10,13 @@ public:
 	PushRelabel(void);
 	~PushRelabel(void);
 
-	static int calc(Graph* g, Node* preflowNodes);
+	static int calc(Graph* g);
 	static int recalc(Graph* gr, Node* preflowNodes, int from, int to, int by);
+	static EdgeEntry* findLowestLabelEdge(Node* node);
 
 	static unsigned long numOfPushes;
 	static unsigned long numOfRelables;
+
 
 private:
 	static int updateLabels(bool fromTarget);

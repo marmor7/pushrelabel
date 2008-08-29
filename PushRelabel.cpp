@@ -14,7 +14,7 @@ unsigned long PushRelabel::numOfPushes;
 unsigned long PushRelabel::numOfRelables;
 
 
-int PushRelabel::calc(Graph* gr, Node* preflowNodes)
+int PushRelabel::calc(Graph* gr)
 {
 	g = gr;
 	nodeArr = g->getNodeArray();
@@ -42,10 +42,6 @@ int PushRelabel::calc(Graph* gr, Node* preflowNodes)
 
 	//Calc pre-flow
 	preflow();
-
-	//Backup the preflow nodes in an array, for recalc.
-	if (preflowNodes)
-		memcpy(preflowNodes, nodeArr, sizeof(Node)*g->getNodesNum());
 
 	if (DEBUG >= LOG_2)
 		g->debugDump();
@@ -226,8 +222,8 @@ int PushRelabel::updateLabels(bool fromTarget)
 				if (nodeArr[edgePtr->getEndPoint()].getLabel() == NEW_NODE)
 				{
 					//TBD
-					// if (((edgePtr->getFlow() != 0) && (fromTarget))
-					// || ((edgePtr->getResCapacity() != 0) && (!fromTarget)))
+//					if (((edgePtr->getFlow() != 0) && (fromTarget)))
+//					|| ((edgePtr->getResCapacity() != 0) && (!fromTarget)))
 						nodeQueue.push(edgePtr->getEndPoint());
 					nodeArr[edgePtr->getEndPoint()].setLabel(QUEUE_NODE);
 				}
@@ -261,16 +257,19 @@ int PushRelabel::discharge(Node* node)
 {
 	bool search = false;
 	int push_value = 0;
+	int edges = 0;
 
 	//Nodes with no paths to target and the sink need not to be discharged
 	if ((node->getID() == g->getTarget()) || (node->getLabel() == INFINITY))
 		return 0;
 
 	//Set the first edge to cur (skip the dummy)
+	//EdgeEntry* cur = findLowestLabelEdge(node);
 	EdgeEntry* cur = node->getAdjList()->getNext();
 
 	while ((cur != NULL) && (node->getExcess() > 0))
 	{
+		edges++;
 		//check if the arc is admissible (not saturated and label is 1 + end node label)
 		if (isAdmissible(node, cur) && (cur->getEndPoint() != g->getSource()))
 		{
@@ -288,7 +287,11 @@ int PushRelabel::discharge(Node* node)
 				search = true;
 		}
 
-		cur = cur->getNext();
+		if (edges < node->getNumEdges())
+			//cur = findLowestLabelEdge(node);
+			cur = cur->getNext();
+		else
+			cur = NULL;
 	}
 
 	if (search) 
@@ -333,6 +336,7 @@ int PushRelabel::relabel(Node* node)
 		cout << "relabel " << node->getID() << " from: " << node->getLabel();
 	int min = INFINITY;
 	EdgeEntry* cur = node->getAdjList()->getNext();
+	//EdgeEntry* cur = findLowestLabelEdge(node);
 
 	while (cur != NULL)
 	{
@@ -342,13 +346,18 @@ int PushRelabel::relabel(Node* node)
 
 		cur = cur->getNext();
 	}
+	//if (cur == NULL)
+	//	min = INFINITY;
+	//else
+	//	min = nodeArr[cur->getEndPoint()].getLabel();
 
-	if ((min == INFINITY) || (min >= g->getNodesNum()))
+	if ((min == INFINITY) || (min+1 >= g->getNodesNum()-1))
 		node->setLabel(INFINITY);
 	else 
 	{
 		node->setLabel(min + 1);
 		g->getPool()->addNode(node);
+
 	}
 
 	if (DEBUG >= LOG_2)
@@ -461,4 +470,22 @@ int PushRelabel::findClosestPushBack(Node* node)
 	if (min < g->getTarget()) return(min);
 	else return(INFINITY);
 
+}
+
+EdgeEntry* PushRelabel::findLowestLabelEdge(Node* node)
+{
+	int min = INFINITY;
+	EdgeEntry *tmp = node->getAdjList()->getNext();
+	EdgeEntry *returnEdge = NULL;
+	while (tmp != NULL)
+	{
+		if ((nodeArr[tmp->getEndPoint()].getLabel() < min) && (tmp->getResCapacity() > 0))
+		{
+			min = nodeArr[tmp->getEndPoint()].getLabel();
+			returnEdge = tmp;
+		}
+		tmp = tmp->getNext();
+	}
+
+	return returnEdge;
 }

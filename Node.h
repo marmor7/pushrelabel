@@ -28,6 +28,8 @@ public:
 	void setID(int node_id) { id = node_id; }
 	EdgeEntry* getAdjList() { return adjList; }
 	EdgeEntry* getLastEdge() { return lastEdge; }
+	void incNumEdges() { numEdges++; }
+	int getNumEdges() { return numEdges; };
 
 	void addEdge(EdgeEntry* edge);
 	void printNode();
@@ -38,6 +40,8 @@ private :
     int label;
 	int excess;
 	int id;
+	int numEdges;
+
     EdgeEntry *adjList;
 	EdgeEntry *lastEdge;
 };

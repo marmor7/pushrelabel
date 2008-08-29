@@ -8,6 +8,7 @@ void Node::addEdge(EdgeEntry* edge)
 	lastEdge->nextEdge = edge;
 	edge->prevEdge = lastEdge;
 	lastEdge = edge;
+	numEdges++;
 }
 
 Node::Node()
@@ -18,6 +19,7 @@ Node::Node()
 	excess = 0;
 	adjList = new EdgeEntry(0, 0, 0, NULL);
 	lastEdge = adjList;
+	numEdges = 0;
 }
 
 void Node::decExcess(int value)
@@ -57,3 +59,4 @@ bool Node::operator<(const Node* node) const
 {
 	return label < node->label;   
 }
+
