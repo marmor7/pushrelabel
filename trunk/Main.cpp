@@ -37,8 +37,12 @@ int main(int argc, char **argv)
 	max = PushRelabel::calc(g7, preflowNodes);
 	Graph *g8 = new Graph("100X100.grp");
 	max = PushRelabel::calc(g8, preflowNodes);
-	Graph *g9 = new Graph("440X440.grp");
+	Graph *g9 = new Graph("101X101.grp");
 	max = PushRelabel::calc(g9, preflowNodes);
+	Graph *g10 = new Graph("102X102.grp");
+	max = PushRelabel::calc(g10, preflowNodes);
+	//Graph *g9 = new Graph("440X440.grp");
+	//max = PushRelabel::calc(g9, preflowNodes);
 
 	//int newMaxFlow;
 	//Node* preflowNodes;
