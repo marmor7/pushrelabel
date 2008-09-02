@@ -212,6 +212,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\DijkstraQueue.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\DijkstraQueue.h"
+			>
+		</File>
+		<File
 			RelativePath=".\EdgeEntry.cpp"
 			>
 		</File>
@@ -265,6 +273,14 @@
 		</File>
 		<File
 			RelativePath=".\PushRelabel.h"
+			>
+		</File>
+		<File
+			RelativePath=".\PushRelabel_2.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\PushRelabel_2.h"
 			>
 		</File>
 		<File
