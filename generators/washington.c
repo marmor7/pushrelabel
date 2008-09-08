@@ -900,10 +900,10 @@ int QSize(Queue *Q)
 		: Q->tail - Q->head + Q->size;
 }
 
-bool QueueEmpty(Queue *Q)
-{
-	return Q->head == Q->tail;
-}
+//bool QueueEmpty(Queue *Q)
+//{
+//	return Q->head == Q->tail;
+//}
 /* random.c -- functions dealing with randomization.
 
 RandomPermutation
@@ -1242,10 +1242,10 @@ void main(int argc, char* argv[])
 	range = atoi(argv[4]);
 
 	//TMP
-	fct = 2;
-	dim1 = 440;
-	dim2 = 440;
-	range = 30000;
+	//fct = 2;
+	//dim1 = 440;
+	//dim2 = 440;
+	//range = 30000;
 
 	if ((f = fopen(argv[5], "w")) == NULL)
 		Barf("File Error");
