@@ -1,7 +1,7 @@
 #include "Node.h"
 
 
-
+//Add an edge to the edge list of the node
 void Node::addEdge(EdgeEntry* edge) 
 {
 	assert(lastEdge); //lastEdge is never null (initialized with dummy)
@@ -11,6 +11,7 @@ void Node::addEdge(EdgeEntry* edge)
 	numEdges++;
 }
 
+//Node constructor
 Node::Node()
 {
 	degree = 0;
@@ -22,6 +23,7 @@ Node::Node()
 	numEdges = 0;
 }
 
+//Decrement the excess of the node
 void Node::decExcess(int value)
 {
 	if (excess < value)
@@ -30,6 +32,7 @@ void Node::decExcess(int value)
 		excess -= value; 
 }
 
+//Print a node
 void Node::printNode()
 {
 	EdgeEntry* listPtr = adjList->getNext();
@@ -41,6 +44,7 @@ void Node::printNode()
 	cout << endl;
 }
 
+//Print the node debug dump info
 void Node::debugNodeDump()
 {
 	cout << getID() << ": ";
@@ -50,6 +54,7 @@ void Node::debugNodeDump()
 	cout << endl;
 }
 
+//Overwrite the node "greater then" and "less then" operators
 bool Node::operator>(const Node* node) const
 {
 	return label > node->label;   

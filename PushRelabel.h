@@ -3,7 +3,8 @@
 #include <queue>
 #include "FifoQueue.h"
 
-
+//The PushRelabel class is the class where most of the graph algorithms are implements
+//it is responsible to calc the max flow using the push relable algorithm
 class PushRelabel
 {
 public:
@@ -11,15 +12,16 @@ public:
 	~PushRelabel(void);
 
 	static int calc(Graph* g);
-	static int recalc(Graph* gr, Node* preflowNodes, int from, int to, int by);
 	static EdgeEntry* findLowestLabelEdge(Node* node);
+	static int dijkstraPath();
 
 	static unsigned long numOfPushes;
-	static unsigned long numOfRelables;
+	static unsigned long numOfRelabels;
+	static int dist;
 
 
 private:
-	static int updateLabels(bool fromTarget);
+	static int updateLabels(bool fromTarget, bool calcPrev);
 	static Graph *g;
 	static Node* nodeArr;
 
@@ -30,5 +32,5 @@ private:
 	static int findClosestPushBack(Node* node);
 	static bool isAdmissible(Node* start, EdgeEntry* edge);
 	static int push(int start, EdgeEntry* edge, int value);
-	static int relabel(Node* node);
+
 };

@@ -28,10 +28,11 @@ public:
 	int printGraph();
 	int debugDump();
 	Node* getNodeArray() { return nodeArray; }
-	int dijkstraPath();
-	int dijkstra(int source_id, int* &dist);
-	int incEdgeCapacity(int from, int to, int value);
-	//int decEdgeCapacity(int from, int to, int value);
+	int dijkstra(int source_id, int* &dist, int* &prev, int &max);
+	//DEAD CODE
+	/*int incEdgeCapacity(int from, int to, int value);*/
+	int* prevArray; //This will hold the previous node in the BFS path for each node
+	int incPrevPathCap(int val);
 
 private:
 	int sourceID;
@@ -41,5 +42,4 @@ private:
 	int maxDistance;
 	NodePool* pool;
 	Node* nodeArray;
-	bool** adjMatrix;
 };
