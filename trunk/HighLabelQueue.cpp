@@ -1,21 +1,25 @@
 #include "HighLabelQueue.h"
 
+//HighLabelQueue constructor
 HighLabelQueue::HighLabelQueue(void)
 {
-
+	count = 0;
 }
 
+//HighLabelQueue constructor
 HighLabelQueue::HighLabelQueue(int node_num)
 {
-	listArray = new DList[node_num - 1];
+	listArray = new DList[node_num];
 	arrayPtr = 0;
 }
 
+//HighLabelQueue destructor
 HighLabelQueue::~HighLabelQueue(void)
 {
 	free(listArray);
 }
 
+//Add a node to the queue
 void HighLabelQueue::addNode(Node* node)
 {
 	if (node->getLabel() == INFINITY)
@@ -26,6 +30,7 @@ void HighLabelQueue::addNode(Node* node)
 	count++;
 }
 
+//Get a the node with highest label
 Node* HighLabelQueue::getNode()
 {
 	count--;
@@ -35,24 +40,31 @@ Node* HighLabelQueue::getNode()
 	return n;
 }
 
+//Find the new pointer to the index with the highest label node in the queue
 void HighLabelQueue::findNewPtr()
 {
 	bool flag = false;
-	int i = arrayPtr-1;
+	int oldPtr = arrayPtr;
+	int i;
 
-	while (!flag)
+	for (i = arrayPtr-1; i>0 ; i--)
 	{
 		if (listArray[i].front != NULL)
 		{
 			arrayPtr = i;
-			flag = true;
+			break;
 		}
-		else
-			i--;
 	}
+
+	if (arrayPtr == oldPtr)
+		arrayPtr = 0;
 }
 
-//insert a ListNode before the front ListNode 
+//
+//Doubly linked list implementation
+//
+
+//insert a node before the front node
 void HighLabelQueue::DList::insertFront (Node* node)
 {
 	ListNode *newNode;
@@ -77,7 +89,7 @@ void HighLabelQueue::DList::insertFront (Node* node)
 	}
 }
 
-//insert a ListNode after the back ListNode 
+//insert a node after the back node 
 void HighLabelQueue::DList::insertBack (Node* node)
 {
 	ListNode *newNode;
@@ -102,7 +114,7 @@ void HighLabelQueue::DList::insertBack (Node* node)
 	}
 }
 
-//remove the front ListNode 
+//remove the front node 
 Node* HighLabelQueue::DList::removeFront()
 {
 	Node* n = this->front->node;

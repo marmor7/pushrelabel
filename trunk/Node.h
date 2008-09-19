@@ -8,7 +8,8 @@
 
 using namespace std;
 
-
+//The node class represents a node in the graph
+//It holds all the relevant node paramaters (label, edge list)
 class Node
 {
 public:

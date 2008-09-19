@@ -2,7 +2,8 @@
 #include "NodePool.h"
 #include <queue>
 
-
+//A Node FIFO, based on the std queue.
+//Inherits from the NodePool class
 class FifoQueue : public NodePool
 {
 public:

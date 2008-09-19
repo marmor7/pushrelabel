@@ -2,31 +2,39 @@
 #include <time.h>
 #include <algorithm>
 #include <ctime>
+#include <stack>
 
-#define LEVEL_UP -1
-#define NEW_NODE -2
-#define QUEUE_NODE -3
+//These defines are used for the BFS algorithm
+#define LEVEL_UP -1 //Indicating we are one level further from the source
+#define NEW_NODE -2 //Node was not reached yet
+#define QUEUE_NODE -3 //Node is in the queue
 
 //Static Members
 Graph* PushRelabel::g;
 Node* PushRelabel::nodeArr;
 unsigned long PushRelabel::numOfPushes;
-unsigned long PushRelabel::numOfRelables;
+unsigned long PushRelabel::numOfRelabels;
+int PushRelabel::dist;
 
 
+//The main function - calculates the flow in a given graph
 int PushRelabel::calc(Graph* gr)
 {
+	//Save pointers
 	g = gr;
 	nodeArr = g->getNodeArray();
 
 	if (DEBUG >= LOG_3)
 		g->printGraph();
 
+	//Start timing
 	clock_t start, finish;
 	start = clock();
 
 	//Traverse all nodes (BFS) and initialize distance labels
-	updateLabels(true);
+	updateLabels(true, false);
+	//Save the distance between the source and the sink
+	dist = nodeArr[g->getSource()].getLabel();
 
 	//Set source's excess flow
 	nodeArr[g->getSource()].setExcess(INFINITY);
@@ -37,8 +45,9 @@ int PushRelabel::calc(Graph* gr)
 	if (DEBUG >= LOG_2)
 		g->debugDump();
 
+	//Reset the number of pushes and relabels
 	PushRelabel::numOfPushes = 0;
-	PushRelabel::numOfRelables = 0;
+	PushRelabel::numOfRelabels = 0;
 
 	//Calc pre-flow
 	preflow();
@@ -46,20 +55,25 @@ int PushRelabel::calc(Graph* gr)
 	if (DEBUG >= LOG_2)
 		g->debugDump();
 
+	//Print out the number of pushes and relabels done by the algorithm
 	if (DEBUG >= LOG_NONE){
 		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
-		cout << "# relables: " << PushRelabel::numOfRelables << endl;
+		cout << "# relables: " << PushRelabel::numOfRelabels << endl;
 	}
 
+	//The excess of the target is the maximum flow
 	int maxFlow = nodeArr[g->getTarget()].getExcess();
 	cout << "Max flow value is " << maxFlow << endl;
-	//Reset the distance labels - this time from the source
-	updateLabels(false);
+	finish = clock();
+	cout << "Phase 1 total clocks: " << (finish - start) << endl << endl << endl;
+	//Reset the distance labels - this time from the source (in order to push excess flow back to the source)
+	updateLabels(false, true);
 
 	//Enqueue all the nodes with Excess > 0
 	assert(g->getPool()->isEmpty()); //At this point the queue should be empty
-	for (int i=0 ; i< g->getNodesNum() ; i++){ //No +1 here because we don't want the sink
-		if (nodeArr[i].getExcess() > 0){
+	for (int i=1 ; i< g->getNodesNum() ; i++){ //No +1 here because we don't want the sink
+		if (nodeArr[i].getExcess() > 0)
+		{
 			g->getPool()->addNode(&nodeArr[i]);
 		}
 	}
@@ -67,106 +81,16 @@ int PushRelabel::calc(Graph* gr)
 	//pre-flow to flow (remove excesses)
 	flow();
 
+	//Time the end of the run
 	finish = clock();
-
-	// Try to find an edge for recalc
-	//updateLabels(true);
-	//for (int i=g->getNodesNum(); i > 0; i--){
-	//	for (int j=g->getNodesNum(); j > 0; j--){
-	//		if (!g->incEdgeCapacity(i, j, 10000)){
-	//			updateLabels(true);
-	//			if (nodeArr[g->getSource()].getLabel() < INFINITY)
-	//			{
-	//				cout << i << "->" << j << endl;
-	//				break;
-	//			}
-	//		}
-	//	}
-	//	if (nodeArr[g->getSource()].getLabel() < INFINITY)
-	//		break;
-	//}
-
 	
-	cout << "Total clocks: " << (finish - start) << endl;
+	cout << "Total clocks: " << (finish - start) << endl << endl << endl;
 
 	return maxFlow;
 }
 
-int PushRelabel::recalc(Graph* gr, Node* preflowNodes, int from, int to, int by)
-{
-	assert(gr != NULL);
-	assert(preflowNodes != NULL);
-
-	g = gr;
-	nodeArr = g->getNodeArray();
-	memcpy(nodeArr, preflowNodes, sizeof(Node)*g->getNodesNum());
-
-	//Traverse all nodes (BFS) and initialize distance labels
-	updateLabels(true);
-
-	PushRelabel::numOfPushes = 0;
-	PushRelabel::numOfRelables = 0;
-
-	//If sink is unreachable from the source (label = INF), then stop
-	if (nodeArr[g->getSource()].getLabel() == INFINITY)
-		return 0;
-
-	if (DEBUG >= LOG_3)
-		g->printGraph();
-
-	clock_t start, middle, finish;
-	start = clock();
-
-	//Put the source in the pool
-	//g->getPool()->addNode(&nodeArr[from]);
-	g->getPool()->addNode(&nodeArr[g->getSource()]);
-
-	nodeArr[g->getSource()].setExcess(by); //TMP
-	//nodeArr[from].setExcess(by); //TMP
-	//nodeArr[from].setLabel(nodeArr[from].getLabel()+1);
-
-	if (DEBUG >= LOG_2)
-		g->debugDump();
-
-	//Calc pre-flow
-	preflow();
-
-	if (DEBUG >= LOG_2)
-		g->debugDump();
-
-	if (DEBUG >= LOG_NONE){
-		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
-		cout << "# relables: " << PushRelabel::numOfRelables << endl;
-	}
-
-	int maxFlow = nodeArr[g->getTarget()].getExcess();
-	cout << "Max flow value is " << maxFlow << endl;
-	//Reset the distance labels - this time from the source
-	updateLabels(false);
-
-	//Enqueue all the nodes with Excess > 0
-	assert(g->getPool()->isEmpty()); //At this point the queue should be empty
-	for (int i=0 ; i< g->getNodesNum() ; i++) //No +1 here because we don't want the sink
-		if (nodeArr[i].getExcess() > 0)
-			g->getPool()->addNode(&nodeArr[i]);
-
-	middle = clock();
-	cout << "Total ticks to preflow: " << middle - start << endl;
-
-	cout << "preflow done..." << " calc flow..." << endl;
-
-	//pre-flow to flow (remove excesses)
-	flow();
-
-	finish = clock();
-	cout << "Total ticks to flow: " << finish - start << endl;
-	cout << "Total ticks from preflow to flow: " << finish - middle << endl;
-
-	return maxFlow;
-}
-
-
-int PushRelabel::updateLabels(bool fromTarget)
+//Run a BFS and update the distance labels accordingly
+int PushRelabel::updateLabels(bool fromTarget, bool calcPrev)
 {
 	int source;
 
@@ -174,7 +98,7 @@ int PushRelabel::updateLabels(bool fromTarget)
 		source = g->getTarget();
 	else
 		source = g->getSource();
-
+	//The BFS algorithm uses a standard FIFO
 	queue<int> nodeQueue;
 	int cur;
 
@@ -182,8 +106,12 @@ int PushRelabel::updateLabels(bool fromTarget)
 
 	//Init all to NEW_NODE
 	for (int i = 1; i <= g->getNodesNum(); i++)
+	{
 		nodeArr[i].setLabel(NEW_NODE);
-
+		if (calcPrev)
+			g->prevArray[i] = 0;
+	}
+	//Push the source (distance 0) and set a level up
 	nodeQueue.push(source);
 	nodeQueue.push(LEVEL_UP);
 	nodeArr[source].setLabel(QUEUE_NODE);
@@ -191,11 +119,14 @@ int PushRelabel::updateLabels(bool fromTarget)
 	if (DEBUG >= LOG_2)
 		cout << "Updating Labels..." << endl;
 
+	//The main loop
 	while (!nodeQueue.empty())
-	{
+	{	
+		//Pop the next node in the queue
 		cur = nodeQueue.front();
 		nodeQueue.pop();
 
+		//Level up means we are one level further from the source
 		if (cur == LEVEL_UP)
 		{
 			if (nodeQueue.empty())
@@ -203,6 +134,7 @@ int PushRelabel::updateLabels(bool fromTarget)
 			level++;
 			nodeQueue.push(LEVEL_UP);
 		}
+		//We take a node marked as queue node and set its distance
 		else
 		{
 			if (DEBUG >= LOG_3)
@@ -218,14 +150,15 @@ int PushRelabel::updateLabels(bool fromTarget)
 			//Skip dummy
 			edgePtr = edgePtr->getNext();
 			while (edgePtr != NULL)
-			{				
+			{
+				//Only new nodes are enqueued
 				if (nodeArr[edgePtr->getEndPoint()].getLabel() == NEW_NODE)
 				{
-					//TBD
-//					if (((edgePtr->getFlow() != 0) && (fromTarget)))
-//					|| ((edgePtr->getResCapacity() != 0) && (!fromTarget)))
-						nodeQueue.push(edgePtr->getEndPoint());
+					nodeQueue.push(edgePtr->getEndPoint());
 					nodeArr[edgePtr->getEndPoint()].setLabel(QUEUE_NODE);
+					//This is used to utilize the BFS to find a previous edges path
+					if (calcPrev)
+						g->prevArray[edgePtr->getEndPoint()] = cur;
 				}
 
 				edgePtr = edgePtr->getNext();
@@ -242,6 +175,8 @@ int PushRelabel::updateLabels(bool fromTarget)
 	return 0;
 }
 
+//After flow() we have the max flow at the target but we still need to have excess == 0 in all
+//the other nodes in the graph, this function pushes the flow back to the source
 int PushRelabel::preflow()
 {
 	NodePool* pool = g->getPool();
@@ -253,20 +188,24 @@ int PushRelabel::preflow()
 	return 0;
 }
 
+//Discharge a node, push all the extra excess according to the Push-Relable algorithm
 int PushRelabel::discharge(Node* node)
 {
 	bool search = false;
 	int push_value = 0;
 	int edges = 0;
+	int level = 0;
+	EdgeEntry* cur;
 
 	//Nodes with no paths to target and the sink need not to be discharged
 	if ((node->getID() == g->getTarget()) || (node->getLabel() == INFINITY))
 		return 0;
 
 	//Set the first edge to cur (skip the dummy)
-	//EdgeEntry* cur = findLowestLabelEdge(node);
-	EdgeEntry* cur = node->getAdjList()->getNext();
+	level = node->getLabel();
+	cur = node->getAdjList()->getNext();
 
+	//Scan the edges
 	while ((cur != NULL) && (node->getExcess() > 0))
 	{
 		edges++;
@@ -287,28 +226,51 @@ int PushRelabel::discharge(Node* node)
 				search = true;
 		}
 
-		if (edges < node->getNumEdges())
-			//cur = findLowestLabelEdge(node);
-			cur = cur->getNext();
-		else
-			cur = NULL;
+		cur = cur->getNext();
+
 	}
 
+	//Once we reach the target we "normalize" the labels
 	if (search) 
-		updateLabels(false);
-
-	if (node->getExcess() > 0)
-		relabel(node);
+		updateLabels(true, false);
+	else
+	{
+		//If the node has no more excess set the new label
+		if (node->getExcess() == 0)
+		{
+			cur = findLowestLabelEdge(node);
+			if (cur != NULL)
+				level = nodeArr[cur->getEndPoint()].getLabel();
+			else
+				level = INFINITY;
+		}
+		//We don't relabel the source and the target
+		if ((node->getID() != g->getSource())
+			&& (node->getID() != g->getTarget()))
+		{
+			//Since the source and the targets labels don't chance the max label is 2Xdist-1
+			if (level > (2*PushRelabel::dist)-1)
+				node->setLabel(INFINITY);
+			else
+				node->setLabel(level+1);
+			PushRelabel::numOfRelabels++;
+		}
+	}
+	//If the node should be returned to the queue for further discharge we return it
+	if (node->getExcess() > 0 && node->getLabel() <=(2*PushRelabel::dist)-1 && (node->getID() != g->getSource()) && (node->getID() != g->getTarget()))
+		g->getPool()->addNode(node);
 
 	return 0;
 }
 
+//Check if an edge is admissible for a push
 bool PushRelabel::isAdmissible(Node* start, EdgeEntry* edge)
 {
 	return ((!edge->isSaturated()) && 
 		(start->getLabel() == nodeArr[edge->getEndPoint()].getLabel() + 1));
 }
 
+//Push 'value' flow on 'edge' in node id 'start'
 int PushRelabel::push(int start, EdgeEntry* edge, int value)
 {
 	PushRelabel::numOfPushes++;
@@ -329,43 +291,8 @@ int PushRelabel::push(int start, EdgeEntry* edge, int value)
 	return 0;
 }
 
-int PushRelabel::relabel(Node* node)
-{
-	PushRelabel::numOfRelables++;
-	if (DEBUG >= LOG_2)
-		cout << "relabel " << node->getID() << " from: " << node->getLabel();
-	int min = INFINITY;
-	EdgeEntry* cur = node->getAdjList()->getNext();
-	//EdgeEntry* cur = findLowestLabelEdge(node);
-
-	while (cur != NULL)
-	{
-		if ((nodeArr[cur->getEndPoint()].getLabel() < min) &&
-			(cur->getResCapacity() > 0))
-			min = nodeArr[cur->getEndPoint()].getLabel();
-
-		cur = cur->getNext();
-	}
-	//if (cur == NULL)
-	//	min = INFINITY;
-	//else
-	//	min = nodeArr[cur->getEndPoint()].getLabel();
-
-	if ((min == INFINITY) || (min+1 >= g->getNodesNum()-1))
-		node->setLabel(INFINITY);
-	else 
-	{
-		node->setLabel(min + 1);
-		g->getPool()->addNode(node);
-
-	}
-
-	if (DEBUG >= LOG_2)
-		cout << " to: " << (min == INFINITY ? INFINITY : min+1) << endl;
-
-	return 0;
-}
-
+//Push flow from the source to the sink, after this function
+//some nodes will be left with excess > 0 but the target will have its max flow
 int PushRelabel::flow()
 {
 	if (DEBUG >= LOG_2) //Print the excess of each node
@@ -375,6 +302,7 @@ int PushRelabel::flow()
 			if (nodeArr[i+1].getExcess() > 0)
 				cout << "Node :" << i+1 << " Excess :" << nodeArr[i+1].getExcess() << endl;
 	}
+	//Extract nodes from the pull and push the flow back
 	NodePool* pool = g->getPool();
 	while (!pool->isEmpty())
 	{
@@ -391,6 +319,7 @@ int PushRelabel::flow()
 	return 0;
 }
 
+//Push the flow back from a given node
 int PushRelabel::discharge_back(Node *node)
 {
 	int extra, level, quantity;
@@ -403,14 +332,17 @@ int PushRelabel::discharge_back(Node *node)
 		return 0;
 
 	extra = node->getExcess();
-
+	//Main loop - as long as we still have excess in the node
 	while (extra > 0) {
+		//Find the closest node to the source to push back
 		level = findClosestPushBack(node);
+		//No where to push back
 		if (level == INFINITY) break;
-
+		//Find an edge to push back
 		edge = node->getAdjList();
 		while (edge != NULL && extra > 0) 
 		{
+			//If we found a pushback - push back
 			if ((edge->getFlow() < edge->getCapacity()) && (nodeArr[edge->getEndPoint()].getLabel() == level)) 
 			{
 				quantity = edge->getCapacity()-edge->getFlow();
@@ -433,30 +365,32 @@ int PushRelabel::discharge_back(Node *node)
 			edge = edge->getNext();
 		}
 	}
-
+	//We reached the source - update the labels
 	if (search) 
-		updateLabels(false);
+		updateLabels(false, false);
 	else 
 	{
+		//Update the labels
 		if (extra == 0) 
 			level = findClosestPushBack(node);
-
-		if (level >= g->getTarget()) 
+		if (level > (2*PushRelabel::dist)-1)
 			node->setLabel(INFINITY);
-		else 
+		else
 			node->setLabel(level+1);
+
 	}
 
 	node->setExcess(extra);
 	return 0;
 }
 
+//Find the level closest to the source where you can push back
 int PushRelabel::findClosestPushBack(Node* node)
 {
 	EdgeEntry* edge = node->getAdjList();
 	Node* end_point;
     int min = INFINITY;
-
+	//Scan the edges to find the min label
 	while (edge!=NULL) {
 		if ((edge->getFlow() < edge->getCapacity()) && edge->isReverseEdge()) 
 		{
@@ -472,11 +406,13 @@ int PushRelabel::findClosestPushBack(Node* node)
 
 }
 
+//Find the edge with the lowest label to return
 EdgeEntry* PushRelabel::findLowestLabelEdge(Node* node)
 {
 	int min = INFINITY;
 	EdgeEntry *tmp = node->getAdjList()->getNext();
 	EdgeEntry *returnEdge = NULL;
+	//Scan the edges
 	while (tmp != NULL)
 	{
 		if ((nodeArr[tmp->getEndPoint()].getLabel() < min) && (tmp->getResCapacity() > 0))
@@ -488,4 +424,55 @@ EdgeEntry* PushRelabel::findLowestLabelEdge(Node* node)
 	}
 
 	return returnEdge;
+}
+
+//Find a path using Dijkstra's algorithm
+int PushRelabel::dijkstraPath(void)
+{
+	int *dist;
+	int *prev;
+	int i,max = INFINITY;
+	EdgeEntry *tmp_edge;
+	stack<int> s;
+	//Time the recalc
+	clock_t start, finish;
+	start = clock();
+	//Allocate the dist and prev ararys
+	dist = new int[g->getNodesNum()+1];
+	memset(dist,0,sizeof(int)*(g->getNodesNum()+1));
+	prev = new int[g->getNodesNum()+1];
+	memset(prev,0,sizeof(int)*(g->getNodesNum()+1));
+
+	//Calc the distances from the source and from the target
+	g->dijkstra(g->getSource(), dist, prev, max);
+	//Scan the path found by the algorithm
+	//Since we want to go from source to target we reverse the path using a stack
+	i = g->getTarget();
+	while( i!=0 )
+	{
+		s.push(i);
+		i = prev[i];
+	}
+	//Now we follow the stack from source to target pushing the max flow found by Dijkstra's algorithm
+	i = s.top();
+	s.pop();
+	while(i != g->getTarget())
+	{
+		tmp_edge = nodeArr[i].getAdjList();
+		while (tmp_edge->getEndPoint() != s.top())
+			tmp_edge = tmp_edge->getNext();
+		push(i,tmp_edge,max);
+		i = s.top();
+		s.pop();
+	}
+	//Free the arrays
+	free(dist);
+	free(prev);
+	//End time
+	finish = clock();
+	cout << "New max flow: " << nodeArr[g->getTarget()].getExcess() << endl;
+	cout << "Total clocks for recalc: " << (finish - start) << endl << endl << endl;
+
+	return 0;
+	
 }

@@ -2,11 +2,15 @@
 #include "NodePool.h"
 #include <queue>
 
-
+//The HighLabelQueue implements a priority queue as described in the article
+//It holds an array of doubly linked lists, and an index to the array indicating
+//the place of the list with the highest labels
 class HighLabelQueue : public NodePool
 {
 protected:
-	//the doubly linked list sub-class
+	//
+	//the list node sub-class
+	//
 	class ListNode
 	{
 	public:
@@ -15,6 +19,9 @@ protected:
 		ListNode *prev;          //pointer to previous node 
 	};
 
+	//
+	//the doubly linked list sub-class
+	//
 	class DList
 	{
 	public:
@@ -32,7 +39,7 @@ protected:
 		Node* removeFront();
 		void insertBefore(Node* node,ListNode *nodeB);
 	};
-
+	//End of the doubly linked list sub-class
 public:
 	HighLabelQueue(int node_num);
 	HighLabelQueue(void);

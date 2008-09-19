@@ -2,7 +2,9 @@
 #include "HighLabelQueue.h"
 #include <queue>
 
-
+//The DijkstraQueue class inherits from the HighLabelQueue class.
+//This is because the HighLabelQueue class can be used as the priority queue
+//needed for Dijkstra's algorithm with a few minor changes
 class DijkstraQueue : public HighLabelQueue
 {
 
