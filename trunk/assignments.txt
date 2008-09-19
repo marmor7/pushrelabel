@@ -1,0 +1,10 @@
+1. Compile and remove all the warnings
+2. Find a solution on which queue to use in the graph (HL or FIFO)
+3. Document algorithm running time - it might explain why dijkstra is much slower on larget graphs
+4. Remove all comments labeled DEAD CODE
+5. Note on the docuemnt that we tried using the STD priority queue and due to poor results we implemented our own
+6. Decide on the structure of 'main'
+7. Fix doxigen output
+8. Arrange the input\output of the functions (prints)
+9. Test on graphs from AC and GF
+10. Make sure all debug levels print logical things
