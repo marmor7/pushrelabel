@@ -9,4 +9,10 @@
 9. Test on graphs from AC and GF
 10. Make sure all debug levels print logical things
 11. Fill the excel docuement with examples - create graph describing the results
-12. Create a lot more graphs between 10x10 and 100x100 to check more results
+12. Create a lot more graphs between 10x10 and 100x100 to check more results - Should be run at my computer, 
+    i can send you the results
+13. Change program paramaters section in our document
+14. Add washington Wide and Long graphs and tests them
+15. Test bigger AC graphs (maybe 100, 200, ...,1000)
+16. Add finishing conclusions (summing up all the resluts from different graph types, node selection method and feature)
+17. Add clocks per node graph maybe?
