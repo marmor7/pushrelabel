@@ -245,19 +245,23 @@ int PushRelabel::discharge(Node* node)
 				level = INFINITY;
 		}
 		//We don't relabel the source and the target
-		if ((node->getID() != g->getSource())
-			&& (node->getID() != g->getTarget()))
+		//if ((node->getID() != g->getSource())
+		//	&& (node->getID() != g->getTarget()))
 		{
 			//Since the source and the targets labels don't chance the max label is 2Xdist-1
-			if (level > (2*PushRelabel::dist)-1)
-				node->setLabel(INFINITY);
-			else
-				node->setLabel(level+1);
-			PushRelabel::numOfRelabels++;
+			if (level+1 > node->getLabel())
+			{
+				//if (level > (2*PushRelabel::dist)-1)
+				//	node->setLabel(INFINITY);
+				//else
+					node->setLabel(level+1);
+				PushRelabel::numOfRelabels++;
+			}
 		}
 	}
 	//If the node should be returned to the queue for further discharge we return it
-	if (node->getExcess() > 0 && node->getLabel() <=(2*PushRelabel::dist)-1 && (node->getID() != g->getSource()) && (node->getID() != g->getTarget()))
+	if (node->getExcess() > 0 && (node->getLabel() <=(8*PushRelabel::dist)
+		&& (node->getLabel() < g->getNodesNum())))// && (node->getID() != g->getSource()) && (node->getID() != g->getTarget()))
 		g->getPool()->addNode(node);
 
 	return 0;
