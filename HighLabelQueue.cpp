@@ -11,6 +11,7 @@ HighLabelQueue::HighLabelQueue(int node_num)
 {
 	listArray = new DList[node_num];
 	arrayPtr = 0;
+	count = 0;
 }
 
 //HighLabelQueue destructor
