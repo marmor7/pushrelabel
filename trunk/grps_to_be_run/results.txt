@@ -1,0 +1,396 @@
+wa_long_16_8
+HL
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_16_8.grp
+# pushes: 3793
+# relables: 5876
+Max flow value is 12410
+Phase 1 total clocks: 14
+
+
+Total clocks: 17
+
+
+# pushes: 3524
+# relables: 5882
+Max flow value is 12415
+Phase 1 total clocks: 13
+
+
+Total clocks: 16
+
+
+Press any key to continue . . .
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_16_8.grp
+# pushes: 4568
+# relables: 5863
+Max flow value is 12410
+Phase 1 total clocks: 11
+
+
+Total clocks: 17
+
+
+# pushes: 4296
+# relables: 5868
+Max flow value is 12415
+Phase 1 total clocks: 12
+
+
+Total clocks: 18
+
+
+Press any key to continue . . .
+Dijkstra - 2 clocks
+
+wa_long_25_20
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_25_20.grp
+# pushes: 11314
+# relables: 20918
+Max flow value is 18448
+Phase 1 total clocks: 42
+
+
+Total clocks: 54
+
+
+# pushes: 9305
+# relables: 20218
+Max flow value is 18453
+Phase 1 total clocks: 39
+
+
+Total clocks: 50
+
+
+Press any key to continue . . .
+
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_25_20.grp
+# pushes: 16231
+# relables: 21814
+Max flow value is 18448
+Phase 1 total clocks: 37
+
+
+Total clocks: 67
+
+
+# pushes: 12492
+# relables: 20326
+Max flow value is 18453
+Phase 1 total clocks: 30
+
+
+Total clocks: 60
+
+
+Press any key to continue . . .
+
+Dijkstra 25 clocks
+
+wa_long_600_300 - takes too long
+
+wa_long_1000_10
+HL
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_1000_10.grp
+# pushes: 139208
+# relables: 277454
+Max flow value is 798581
+Phase 1 total clocks: 479
+
+
+Total clocks: 11303
+
+
+# pushes: 85137
+# relables: 259074
+Max flow value is 798596
+Phase 1 total clocks: 399
+
+
+Total clocks: 11121
+
+
+Press any key to continue . . .
+
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_1000_10.grp
+# pushes: 169557
+# relables: 287150
+Max flow value is 798581
+Phase 1 total clocks: 484
+
+
+Total clocks: 26263
+
+
+# pushes: 101313
+# relables: 263300
+Max flow value is 798596
+Phase 1 total clocks: 354
+
+
+Total clocks: 26303
+
+
+Press any key to continue . . .
+Dijkstra - 4778
+
+wa_long_1000_80
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_1000_80.grp
+# pushes: 28532963
+# relables: 29477581
+Max flow value is 777872
+Phase 1 total clocks: 87333
+
+
+Total clocks: 177047
+
+
+# pushes: 27789924
+# relables: 29170985
+Max flow value is 777877
+Phase 1 total clocks: 84957
+
+
+Total clocks: 171030
+
+
+Press any key to continue . . .
+
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_long_1000_80.grp
+# pushes: 30051362
+# relables: 29550340
+Max flow value is 777872
+Phase 1 total clocks: 86645
+
+
+Total clocks: 329555
+
+
+# pushes: 27955690
+# relables: 28976969
+Max flow value is 777877
+Phase 1 total clocks: 73548
+
+
+Total clocks: 315273
+
+
+Press any key to continue . . .
+Dijkstra 180667
+
+wa_wide_8_16
+HL
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_8_16.grp
+# pushes: 609
+# relables: 2586
+Max flow value is 5516
+Phase 1 total clocks: 6
+
+
+Total clocks: 8
+
+
+# pushes: 279
+# relables: 2527
+Max flow value is 5521
+Phase 1 total clocks: 5
+
+
+Total clocks: 8
+
+
+Press any key to continue . . .
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_8_16.grp
+# pushes: 533
+# relables: 2634
+Max flow value is 5516
+Phase 1 total clocks: 5
+
+
+Total clocks: 9
+
+
+# pushes: 63
+# relables: 2528
+Max flow value is 5521
+Phase 1 total clocks: 5
+
+
+Total clocks: 9
+
+
+Press any key to continue . . .
+Dijkstra - 3 clocks
+
+wa_wide_20_25
+HL
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_20_25.grp
+# pushes: 16766
+# relables: 31374
+Max flow value is 14363
+Phase 1 total clocks: 74
+
+
+Total clocks: 92
+
+
+# pushes: 10992
+# relables: 28831
+Max flow value is 14368
+Phase 1 total clocks: 66
+
+
+Total clocks: 85
+
+
+Press any key to continue . . .
+
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_20_25.grp
+# pushes: 32794
+# relables: 37307
+Max flow value is 14363
+Phase 1 total clocks: 68
+
+
+Total clocks: 109
+
+
+# pushes: 15682
+# relables: 28752
+Max flow value is 14368
+Phase 1 total clocks: 42
+
+
+Total clocks: 81
+
+
+Press any key to continue . . .
+Dijkstra - 105
+
+wa_wide_10_1000
+HL
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_10_1000.grp
+# pushes: 9096833
+# relables: 9018325
+Max flow value is 5761
+Phase 1 total clocks: 54524
+
+
+Total clocks: 54642
+
+
+# pushes: 9086392
+# relables: 9011375
+Max flow value is 5766
+Phase 1 total clocks: 44230
+
+
+Total clocks: 44348
+
+
+Press any key to continue . . .
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_10_1000.grp
+# pushes: 10437832
+# relables: 9032396
+Max flow value is 5761
+Phase 1 total clocks: 19264
+
+
+Total clocks: 19981
+
+
+# pushes: 10287040
+# relables: 8982780
+Max flow value is 5766
+Phase 1 total clocks: 19158
+
+
+Total clocks: 19881
+
+
+Press any key to continue . . .
+Dijkstra 17434
+
+wa_wide_80_1000
+HL
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_80_1000.grp
+# pushes: 210683803
+# relables: 211802924
+Max flow value is 56027
+Phase 1 total clocks: 797415
+
+
+Total clocks: 804151
+
+
+# pushes: 209860419
+# relables: 210824101
+Max flow value is 56032
+Phase 1 total clocks: 805766
+
+
+Total clocks: 812546
+
+
+Press any key to continue . . .
+FIFO
+Using Push Relabel recalc
+
+Creating graph from file grps_to_be_run/wa_wide_80_1000.grp
+# pushes: 233262485
+# relables: 215906422
+Max flow value is 56027
+Phase 1 total clocks: 593105
+
+
+Total clocks: 631738
+
+
+# pushes: 225149565
+# relables: 210145113
+Max flow value is 56032
+Phase 1 total clocks: 574362
+
+
+Total clocks: 617800
+
+
+Press any key to continue . . .
+Dijkstra 806362
