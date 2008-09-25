@@ -12,7 +12,7 @@ using namespace std;
 class Graph
 {
 public:
-	Graph(string file);
+	Graph::Graph(string file, bool hlQueue);
 	~Graph(void);
 
 	int getSource() { return sourceID; }
@@ -25,12 +25,10 @@ public:
 	NodePool* getPool() { return pool; }
 
 	int readGraph (string file);
-	int printGraph();
+	int printGraph(string file);
 	int debugDump();
 	Node* getNodeArray() { return nodeArray; }
 	int dijkstra(int source_id, int* &dist, int* &prev, int &max);
-	//DEAD CODE
-	/*int incEdgeCapacity(int from, int to, int value);*/
 	int* prevArray; //This will hold the previous node in the BFS path for each node
 	int incPrevPathCap(int val);
 

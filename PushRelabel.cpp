@@ -18,14 +18,11 @@ int PushRelabel::dist;
 
 
 //The main function - calculates the flow in a given graph
-int PushRelabel::calc(Graph* gr)
+int PushRelabel::calc(Graph* gr, bool stats)
 {
 	//Save pointers
 	g = gr;
 	nodeArr = g->getNodeArray();
-
-	if (DEBUG >= LOG_3)
-		g->printGraph();
 
 	//Start timing
 	clock_t start, finish;
@@ -56,7 +53,7 @@ int PushRelabel::calc(Graph* gr)
 		g->debugDump();
 
 	//Print out the number of pushes and relabels done by the algorithm
-	if (DEBUG >= LOG_NONE){
+	if ((stats) || (DEBUG >= LOG_2)){
 		cout << "# pushes: " << PushRelabel::numOfPushes << endl;
 		cout << "# relables: " << PushRelabel::numOfRelabels << endl;
 	}

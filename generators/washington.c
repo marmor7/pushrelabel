@@ -1242,10 +1242,10 @@ void main(int argc, char* argv[])
 	range = atoi(argv[4]);
 
 	//TMP
-	//fct = 2;
-	//dim1 = 440;
-	//dim2 = 440;
-	//range = 30000;
+	fct = 2;
+	dim1 = 16;
+	dim2 = 8;
+	range = 1000;
 
 	if ((f = fopen(argv[5], "w")) == NULL)
 		Barf("File Error");
