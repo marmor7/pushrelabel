@@ -1,0 +1,5 @@
+<area shape="rect" href="$class_node_pool.html" title="NodePool" alt="" coords="5,56,83,83">
+<area shape="rect" href="$class_fifo_queue.html" title="FifoQueue" alt="" coords="149,5,229,32">
+<area shape="rect" href="$class_high_label_queue.html" title="HighLabelQueue" alt="" coords="132,56,247,83">
+<area shape="rect" href="$class_priority_queue.html" title="PriorityQueue" alt="" coords="140,107,239,133">
+<area shape="rect" href="$class_dijkstra_queue.html" title="DijkstraQueue" alt="" coords="296,56,400,83">
