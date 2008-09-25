@@ -1,93 +1,100 @@
 #include "Graph.h"
-#include "PushRelabel_2.h"
+#include "PushRelabel.h"
 
 
 int main(int argc, char **argv)
 {
-	Node* preflowNodes = new Node[200000];
 	int max;
-	string file,line;
+	string file;
 	ifstream graphFile;
 
-	Graph *g = new Graph("3x3.grp");
-	max = PushRelabel::calc(g);
-	g->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
+	bool hlQueue = false;
+	bool doInc = false;
+	int incVal = 0;
+	string incFile;
+	bool printStats = false;
+	bool doOutFile;
+	string resFile;
 
-	Graph *g1 = new Graph("4x4.grp");
-	max = PushRelabel::calc(g1);
-	g1->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
+	if ((argc > 10) || (argc < 2))
+	{
+		cout << "Wrong number of arguments" << endl;
+		cout << "Usage: pushrelabel FILE [-c INC NEW-OUT] [-s] [-o OUT] [-m HL/FIFO]" << endl;
+		exit(1);
+	}
+	else
+	{
+		file = argv[1];
 
-	Graph *g2 = new Graph("4x4x5.grp");
-	max = PushRelabel::calc(g2);
-	g2->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
+		int i = 2;
+		while (i < argc)
+		{
+			if (strncmp(argv[i], "-c", 3) == 0)
+			{
+				if (i+2 > argc)
+				{
+					cout << "Wrong number of arguments" << endl;
+					cout << "Usage: pushrelabel FILE [-c INC NEW-OUT] [-s] [-o OUT] [-m HL/FIFO]" << endl;
+					exit(1);
+				}
+				doInc = true;
+				i++;
+				incVal = atoi(argv[i]);
+				i++;
+				incFile = argv[i];
+			}
+			else if (strncmp(argv[i], "-s", 3) == 0)
+			{
+				printStats = true;
+			}
+			else if (strncmp(argv[i], "-o", 3) == 0)
+			{
+				if (i+1 > argc)
+				{
+					cout << "Wrong number of arguments" << endl;
+					cout << "Usage: pushrelabel FILE [-c INC NEW-OUT] [-s] [-o OUT] [-m HL/FIFO]" << endl;
+					exit(1);
+				}
+				doOutFile = true;
+				i++;
+				resFile = argv[i];
+			}
+			else if (strncmp(argv[i], "-m", 3) == 0)
+			{
+				if (i+1 > argc)
+				{
+					cout << "Wrong number of arguments" << endl;
+					cout << "Usage: pushrelabel FILE [-c INC NEW-OUT] [-s] [-o OUT] [-m HL/FIFO]" << endl;
+					exit(1);
+				}
+				i++;
+				if (strncmp(argv[i], "HL", 3) == 0)
+					hlQueue = true;
+				else
+					hlQueue = false;
+			}
+			else 
+			{
+				cout << "Bad argument - " << argv[i] << endl;
+				cout << "Usage: pushrelabel FILE [-c INC NEW-OUT] [-s] [-o OUT] [-m HL/FIFO]" << endl;
+				exit(1);
+			}
 
-	Graph *g3 = new Graph("6x6.grp");
-	max = PushRelabel::calc(g3);
-	g3->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
+			i++;
+		}
+	}
 
-	Graph *g4 = new Graph("7x7.grp");
-	max = PushRelabel::calc(g4);
-	g4->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
-	
-	Graph *g5 = new Graph("8x8.grp");
-	max = PushRelabel::calc(g5);
-	g5->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
+	Graph *g = new Graph(file, hlQueue);
+	max = PushRelabel::calc(g, printStats);
+	if (doOutFile)
+		g->printGraph(resFile);
+	if (doInc)
+	{
+		g->incPrevPathCap(incVal);
+		PushRelabel::dijkstraPath();
+		g->printGraph(incFile);
+	}
 
-	Graph *g6 = new Graph("10x10.grp");
-	max = PushRelabel::calc(g6);
-	g6->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
-
-	Graph *g7 = new Graph("30x30.grp");
-	max = PushRelabel::calc(g7);
-	g7->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
-
-	Graph *g8 = new Graph("100x100.grp");
-	max = PushRelabel::calc(g8);
-	g8->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
-
-	Graph *g10 = new Graph("102x102.grp");
-	max = PushRelabel::calc(g10);
-	g10->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
-
-	Graph *g11 = new Graph("101X101.grp");
-	max = PushRelabel::calc(g11);
-	g11->incPrevPathCap(5);
-	PushRelabel::dijkstraPath();
-	//Graph *g9 = new Graph("440x440.grp");
-	//max = PushRelabel::calc(g);
-
-	//Graph *g11 = new Graph("101X101.grp");
-	//max = PushRelabel::calc(g11);
-	//Graph *g12 = new Graph("gf.grp");
-	//max = PushRelabel::calc(g12);
-	//Graph *g13 = new Graph(argv[1]);
-	//max = PushRelabel::calc(g13);	
-	//Graph *g14 = new Graph("1000X4.grp");
-	//max = PushRelabel::calc(g14);
-
-	//int newMaxFlow;
-	//Node* preflowNodes;
-	//Graph *g = new Graph("100X100.grp");
-	//preflowNodes = new Node[g->getNodesNum() + 1];
-	//int max = PushRelabel::calc(g);
-
-	//if (!g->incEdgeCapacity(614, 648, 10000)){
-	//	newMaxFlow = PushRelabel::recalc(g, g->getNodeArray(), 614, 648, 10000);
-	//	cout << newMaxFlow << endl;
-	//}
-
-	//g->dijkstraPath();
-
-	//printf("Done\n");
+	printf("Done\n");
 	return(0);
 }

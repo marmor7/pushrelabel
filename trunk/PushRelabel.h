@@ -11,7 +11,7 @@ public:
 	PushRelabel(void);
 	~PushRelabel(void);
 
-	static int calc(Graph* g);
+	static int calc(Graph* g, bool stats);
 	static EdgeEntry* findLowestLabelEdge(Node* node);
 	static int dijkstraPath();
 

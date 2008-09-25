@@ -33,7 +33,7 @@ public:
 	int getNumEdges() { return numEdges; };
 
 	void addEdge(EdgeEntry* edge);
-	void printNode();
+	void printNode(ofstream & output);
 	void debugNodeDump();
 
 private :

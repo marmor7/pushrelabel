@@ -1,14 +1,21 @@
 #include "Graph.h"
 #include "DijkstraQueue.h"
 #include <queue>
+#include <fstream>
+#include <iostream>
+#include <cstring>
+using namespace std;
 
 //Read the graph from the file and create the graph object
-Graph::Graph(string file)
+Graph::Graph(string file, bool hlQueue)
 {
-	cout << endl << "Creating graph from file " << file << endl;
+	cout << endl << "Creating graph from file " << file << 
+		". Using " << (hlQueue ? "HL" : "FIFO") << " queue method" << endl;
 	readGraph(file);
-	//pool = new HighLabelQueue(nodesNum);
-	pool = new FifoQueue();
+	if (hlQueue)
+		pool = new HighLabelQueue(nodesNum);
+	else
+		pool = new FifoQueue();
 }
 
 //Graph destructor
@@ -133,35 +140,6 @@ int Graph::readGraph(string file)
 	return 0;
 }
 
-//DEAD CODE
-/*
-int Graph::incEdgeCapacity(int from, int to, int value)
-{
-	Node node = getNodeArray()[from];
-	EdgeEntry* list = node.getAdjList();
-	if (list != NULL)
-		list = list->getNext(); //1st call skips dummy
-	while (list != NULL){
-		if (list->getEndPoint() == to)
-			break;
-		list = list->getNext(); //1st call skips dummy
-	}
-	if (list != NULL){
-		if (DEBUG >= LOG_2)
-			cout << "increasing edge " << from << "->" << to << " capacity from " <<
-					list->getCapacity() << " to " << list->getCapacity()+value << endl;
-		list->incCapacity(value);
-		return 0;
-	}
-
-	if (DEBUG >= LOG_2)
-		cout << "Requested edge from " << from << 
-				" to " << to << " wasn't found." << endl;
-
-	return 1;	
-}
-*/
-
 //Dijkstra's algorithms implemnted, find distances from 'source_id'
 //run until you reach the other side (source->target, target->source)
 //Save the path in the 'prev' array, max is used to save the max flow available
@@ -264,18 +242,19 @@ int Graph::dijkstra(int source_id, int* &dist, int* &prev, int &max)
 }
 
 //Print the graph
-int Graph::printGraph ()
+int Graph::printGraph(string file)
 {
+	ofstream output;
+	output.open(file.c_str());
 
-	cout << "Source ID: " << sourceID << ", Target ID: " << targetID << endl;
+	output << "Source ID: " << sourceID << ", Target ID: " << targetID << endl;
 
 	for (int i = 0; i < nodesNum; i++)
 	{
-		cout << i << " ";
-		nodeArray[i].printNode();
+		nodeArray[i].printNode(output);
 	}
 
-	cout << "Done printing" << endl;
+	output.close();
 
 	return 0;
 }

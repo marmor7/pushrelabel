@@ -27,21 +27,20 @@ Node::Node()
 void Node::decExcess(int value)
 {
 	if (excess < value)
-		cout << "BUG";
+		cout << "Error found in excess";
 	else
 		excess -= value; 
 }
 
 //Print a node
-void Node::printNode()
+void Node::printNode(ofstream & output)
 {
 	EdgeEntry* listPtr = adjList->getNext();
 	while (listPtr != NULL)
 	{
-		cout << listPtr->getEndPoint() << " (" << listPtr->getCapacity() << ")" << ", ";
+		output << this->getID() << "->" << listPtr->getEndPoint() << " (" << listPtr->getFlow() << ")" << endl;
 		listPtr = listPtr->getNext();
 	}
-	cout << endl;
 }
 
 //Print the node debug dump info
