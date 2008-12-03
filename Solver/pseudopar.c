@@ -1284,7 +1284,7 @@ main(int argc, char ** argv)
 	timeinfo = localtime ( &rawtime );
 	printf("Time is %s", asctime (timeinfo));
 
-	readDimacsFileCreateList ("440X440.grp");
+	readDimacsFileCreateList ("out1");
 
 #ifdef PROGRESS
 	printf ("c Finished reading file.\n"); fflush (stdout);
