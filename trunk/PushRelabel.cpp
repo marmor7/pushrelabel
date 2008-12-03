@@ -146,6 +146,7 @@ int PushRelabel::updateLabels(bool fromTarget, bool calcPrev)
 			EdgeEntry* edgePtr = PushRelabel::nodeArr[cur].getAdjList();
 			//Skip dummy
 			edgePtr = edgePtr->getNext();
+
 			while (edgePtr != NULL)
 			{
 				//Only new nodes are enqueued

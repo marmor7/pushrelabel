@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory=""
-				CommandArguments="wa_wide_20_25.grp -c 7 new_out.out -s -o output.out -m HL"
+				CommandArguments="out1"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"

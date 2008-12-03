@@ -26,6 +26,33 @@ Graph::~Graph(void)
 	free(prevArray);
 }
 
+//Takes a string and eliminates consecutive spaces and leading spaces
+void stripSpaces(string & str)
+{
+    int startpos = str.find_first_not_of(" \t");
+    int endpos = str.find_last_not_of(" \t");
+  
+    if (startpos >= endpos)
+    {   
+        str = "";
+    }
+    else  
+        str = str.substr( startpos, endpos-startpos+1 );
+
+	startpos = str.find_first_of(" \t");
+	endpos = str.find_first_not_of(" \t", startpos);
+	
+	while ((string::npos != startpos) && (string::npos != endpos))
+	{
+		if (endpos - 1 > startpos){
+			str.erase(startpos + 1, endpos - 1 - startpos);
+		}
+
+		startpos = str.find_first_of(" \t", startpos + 1);
+		endpos = str.find_first_not_of(" \t", startpos);
+	}
+}
+
 //Read the graph from the file
 //File is assumed to be in the DIMACS format
 int Graph::readGraph(string file)
@@ -59,6 +86,7 @@ int Graph::readGraph(string file)
 		while (! graphFile.eof() )
 		{
 			getline (graphFile, line);
+			stripSpaces(line);
 			if (DEBUG >= LOG_3)
 				cout << line << " " << line[0] << endl;
 			if (line.length() == 0) //Ignore empty lines
